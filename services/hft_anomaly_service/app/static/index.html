@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Qpulse</title>
+<link rel="stylesheet" href="/ui/style.css" />
+<script>
+  // Apply theme before paint to avoid flash.
+  (function() {
+    var t = localStorage.getItem('qpulse-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">Q</div>
+    <nav>
+      <a href="#/surveillance" data-route="surveillance" title="Surveillance">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+      </a>
+      <a href="#/history" data-route="history" title="History">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </a>
+      <a href="#/settings" data-route="settings" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </a>
+    </nav>
+  </aside>
+
+  <div class="main">
+
+    <header class="topbar">
+      <div class="title">
+        Qpulse <span class="crumb" id="crumbName">| Surveillance</span>
+      </div>
+      <div id="topbarMeta" class="topbar-meta">
+        <div id="status" class="status-badge live">
+          <span class="dot"></span>
+          <span id="statusText">connecting…</span>
+        </div>
+        <button id="themeToggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ===================== SURVEILLANCE ===================== -->
+      <section class="route" data-route="surveillance">
+
+        <div class="row">
+
+          <div class="card">
+            <div class="card-title">Live stream</div>
+            <div class="stat-line">
+              <div><div class="k">throughput</div><div class="v" id="tps">-</div></div>
+              <div><div class="k">p50 (µs)</div><div class="v" id="p50">-</div></div>
+              <div><div class="k">p95 (µs)</div><div class="v" id="p95">-</div></div>
+              <div><div class="k">p99 (µs)</div><div class="v" id="p99">-</div></div>
+              <div><div class="k">alerts</div><div class="v" id="alerts_total">0</div></div>
+            </div>
+            <div class="k" style="margin-top:12px">symbols</div>
+            <div id="symbols" style="font-size:14px; font-weight:500; margin-top:2px; color:var(--title-color)">-</div>
+            <div class="sparks">
+              <div>
+                <div class="k">throughput (30s)</div>
+                <svg id="sparkTps" class="spark" viewBox="0 0 60 20" preserveAspectRatio="none">
+                  <polyline fill="none" stroke="#2B7ACC" stroke-width="0.7"/>
+                </svg>
+              </div>
+              <div>
+                <div class="k">p99 latency µs (30s)</div>
+                <svg id="sparkP99" class="spark" viewBox="0 0 60 20" preserveAspectRatio="none">
+                  <polyline fill="none" stroke="#D4920B" stroke-width="0.7"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Controls</div>
+            <div style="margin-top:6px; display:flex; gap:8px;">
+              <button id="btnPause">Pause</button>
+              <button id="btnResume" class="primary">Resume</button>
+            </div>
+            <div style="margin-top:14px">
+              <div class="k" style="margin-bottom:4px">Set z-threshold</div>
+              <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                <input id="threshSymbol" placeholder="symbol (e.g. AAPL)" size="14" />
+                <input id="threshValue" placeholder="z_thresh" size="8" />
+                <button id="btnThresh">Apply</button>
+              </div>
+              <div id="threshOut" class="muted" style="margin-top:6px; font-size:11px"></div>
+            </div>
+            <div class="k" style="margin-top:16px">
+              Alert density by symbol <span id="alertWindowLabel" class="muted" style="text-transform:none"></span>
+            </div>
+            <div id="alertBars" style="margin-top:6px"></div>
+          </div>
+
+        </div>
+
+        <div class="tape" id="tapeBody"></div>
+
+        <div id="ctxPanel" class="card">
+          <div class="hdr">
+            <div>
+              <div class="card-title">Context</div>
+              <div id="ctxTitle" style="font-size:14px; font-weight:500; color:var(--title-color); margin-top:2px">-</div>
+            </div>
+            <button class="close" id="ctxClose">close ✕</button>
+          </div>
+          <svg id="ctxChart" viewBox="0 0 800 180" preserveAspectRatio="none" width="100%" height="180">
+            <polyline fill="none" stroke="#2B7ACC" stroke-width="1.2"/>
+            <line id="ctxAlertLine" stroke="#D85A30" stroke-width="1.5" stroke-dasharray="4,4" y1="0" y2="180"/>
+            <circle id="ctxAlertDot" r="4" fill="#D85A30"/>
+          </svg>
+          <div class="muted" style="font-size:12px; margin-top:8px" id="ctxMeta"></div>
+        </div>
+
+      </section>
+
+      <!-- ===================== HISTORY ===================== -->
+      <section class="route" data-route="history" hidden>
+
+        <div class="card">
+          <div class="card-title">Filter</div>
+          <div class="filter-bar">
+            <div>
+              <label>Symbol</label>
+              <input id="fSymbol" placeholder="(any)" size="14" />
+            </div>
+            <div>
+              <label>Kind</label>
+              <select id="fKind">
+                <option value="">(any)</option>
+                <option>robust_z</option>
+                <option>cusum</option>
+                <option>spread_widen</option>
+                <option>obi_extreme</option>
+                <option>quote_rate_spike</option>
+                <option>regime_shift</option>
+                <option>burst</option>
+                <option>dependence_shift</option>
+                <option>volume_spike</option>
+                <option>microprice_drift</option>
+                <option>crossed_book</option>
+              </select>
+            </div>
+            <div>
+              <label>Since (UTC)</label>
+              <input id="fSince" type="datetime-local" />
+            </div>
+            <div>
+              <label>Until (UTC)</label>
+              <input id="fUntil" type="datetime-local" />
+            </div>
+            <div>
+              <label>Limit</label>
+              <input id="fLimit" type="number" value="200" min="1" max="5000" size="6" />
+            </div>
+            <div style="display:flex; gap:6px; align-items:end;">
+              <button class="primary" id="btnApply">Apply</button>
+              <button id="btnReset">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="history-list" id="histBody"></div>
+        <div id="histEmpty" class="history-empty" style="display:none">No alerts match the current filters.</div>
+
+      </section>
+
+      <!-- ===================== SETTINGS ===================== -->
+      <section class="route" data-route="settings" hidden>
+
+        <div class="card">
+          <div class="card-title">Live state</div>
+          <div class="form-row" style="margin-top:6px">
+            <span class="k">Detector status:</span>
+            <span id="liveStatus" class="v" style="font-size:14px">-</span>
+            <button id="btnPause2">Pause</button>
+            <button id="btnResume2" class="primary">Resume</button>
+          </div>
+          <div class="form-row" style="margin-top:8px">
+            <span class="k">Active symbols:</span>
+            <span id="liveSymbols" style="font-family: var(--font-mono); font-size: 13px">-</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Active symbols</div>
+
+          <div class="form-row" style="margin-bottom:10px">
+            <span class="k">Current feed:</span>
+            <select id="feedSelect">
+              <option value="iex">iex (US equities, free, market hours only)</option>
+              <option value="sip">sip (US equities, full SIP, paid tier)</option>
+              <option value="crypto">crypto (BTC, ETH etc., 24/7)</option>
+            </select>
+            <button id="btnSwitchFeed">Switch feed</button>
+            <span id="feedStatus" class="muted" style="font-size:12px"></span>
+          </div>
+          <p class="muted" style="font-size:12px; margin: 4px 0 12px 0">
+            Switching feeds <strong>clears the symbol list</strong> (the formats are different - crypto uses
+            <code>BTC/USD</code>, equities use plain tickers like <code>AAPL</code>). Alpaca's free tier allows
+            one active stream per account. IEX/SIP only emit data during US market hours.
+            Persists to <code>qpulse_live.json</code>.
+          </p>
+
+          <div id="symbolList" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px"></div>
+          <div class="form-row">
+            <input id="newSymbolInput" placeholder="(loading…)" size="20" />
+            <button class="primary" id="btnAddSymbol">Add</button>
+            <span id="symStatus" class="muted" style="font-size:12px"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Per-symbol z-threshold overrides</div>
+          <p class="muted" style="font-size:12px; margin: 4px 0 12px 0">
+            Override the default z-threshold for individual symbols. Live changes auto-persist to <code>qpulse_live.json</code>.
+          </p>
+          <table class="data-table" id="overrideTable">
+            <thead><tr><th>Symbol</th><th>z_thresh</th><th></th></tr></thead>
+            <tbody id="overrideBody"></tbody>
+          </table>
+          <div id="overrideEmpty" class="empty" style="display:none; padding:16px">No overrides set.</div>
+          <div class="form-row" style="margin-top:14px">
+            <input id="newSym" placeholder="symbol" size="14" />
+            <input id="newThresh" placeholder="z_thresh (e.g. 4.0)" size="16" type="number" step="0.1" />
+            <button class="primary" id="btnAdd">Add / Update</button>
+            <span id="addOut" class="muted" style="font-size:12px"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Trade detectors (read-only)</div>
+          <p class="muted" style="font-size:12px; margin: 4px 0 12px 0">
+            Adjust via env vars / <code>configs/&lt;profile&gt;.env</code> and restart.
+          </p>
+          <div class="form-grid" id="cfgTrade"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Microstructure detectors (read-only)</div>
+          <div class="form-grid" id="cfgMicro"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Meta & regime detectors (read-only)</div>
+          <div class="form-grid" id="cfgMeta"></div>
+        </div>
+
+        <div class="card" id="batchCard" style="display:none">
+          <div class="card-title">Batch - cross-asset dependence</div>
+          <div class="form-grid" id="cfgBatch"></div>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// Hash router - single page, three views, persistent state.
+// WebSocket connections live for the lifetime of this document,
+// so navigating between Surveillance / History / Settings does
+// NOT close the live stream.
+// ============================================================
+
+const ROUTES = ['surveillance', 'history', 'settings'];
+const ROUTE_LABELS = {
+  surveillance: '| Surveillance',
+  history:      '| History',
+  settings:     '| Settings',
+};
+
+function currentRoute() {
+  const h = (location.hash || '#/surveillance').replace(/^#\/?/, '');
+  return ROUTES.includes(h) ? h : 'surveillance';
+}
+
+function showRoute(name) {
+  for (const sect of document.querySelectorAll('.route')) {
+    sect.hidden = sect.dataset.route !== name;
+  }
+  for (const a of document.querySelectorAll('.sidebar nav a')) {
+    a.classList.toggle('active', a.dataset.route === name);
+  }
+  document.getElementById('crumbName').textContent = ROUTE_LABELS[name];
+
+  // Surveillance: live status badge stays visible.
+  const badge = document.getElementById('status');
+  badge.style.display = (name === 'surveillance') ? '' : 'none';
+
+  if (name === 'history')  refreshHistory();
+  if (name === 'settings') refreshSettings();
+}
+
+window.addEventListener('hashchange', () => showRoute(currentRoute()));
+showRoute(currentRoute());
+
+// ============================================================
+// Theme toggle (light / dark) - persisted in localStorage.
+// Initial attribute is set by the inline <head> script so paint
+// matches the saved choice. The button just flips and saves.
+// ============================================================
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('qpulse-theme', next);
+});
+
+// ============================================================
+// Shared helpers
+// ============================================================
+const $ = id => document.getElementById(id);
+const fmt = n => (typeof n === 'number' && isFinite(n)) ? n.toFixed(2) : '-';
+async function postJSON(path, body) {
+  const r = await fetch(path, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  return r.json();
+}
+
+// ============================================================
+// Surveillance - live tape, sparklines, alert density
+// State lives at module scope so navigation never resets it.
+// ============================================================
+const MAX_ROWS = 300;
+const tapeBody = $('tapeBody');
+
+function detailsTitle(a) {
+  if (!a.details) return `${a.kind}\nprice: ${fmt(a.price)}\n(no structured details)`;
+  const lines = [`${a.kind}`, `price: ${fmt(a.price)}`, ''];
+  for (const [k, v] of Object.entries(a.details)) {
+    let s = v;
+    if (typeof v === 'number') s = (Number.isInteger(v) ? v : v.toFixed(4));
+    lines.push(`${k}: ${s}`);
+  }
+  return lines.join('\n');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function buildCard(a, timeStr) {
+  const card = document.createElement('div');
+  card.className = 'tape-card';
+  const narrative = a.narrative || `${a.severity || 'INFO'}: ${a.kind} on ${a.symbol} (score ${fmt(a.score)})`;
+  const sev = a.severity || 'INFO';
+  const kind = a.kind || 'unknown';
+  card.innerHTML = `
+    <span class="dot sev-${sev}"></span>
+    <span class="time">${timeStr}</span>
+    <span class="kind-badge kind-${kind}" title="detector: ${kind}">${kind}</span>
+    <span class="narrative-text" title="${escapeHtml(detailsTitle(a))}">${escapeHtml(narrative)}</span>
+    <span class="score">${fmt(a.score)}</span>`;
+  card.addEventListener('click', () => showContext(a));
+  return card;
+}
+
+function addRow(a) {
+  const t = new Date(a.ts_ns / 1e6);
+  const card = buildCard(a, t.toISOString().slice(11,19));
+  tapeBody.prepend(card);
+  while (tapeBody.children.length > MAX_ROWS) tapeBody.removeChild(tapeBody.lastChild);
+}
+
+async function showContext(a) {
+  const panel = $('ctxPanel');
+  const title = $('ctxTitle');
+  const meta  = $('ctxMeta');
+  const svg   = $('ctxChart');
+  const poly  = svg.querySelector('polyline');
+  const line  = $('ctxAlertLine');
+  const dot   = $('ctxAlertDot');
+
+  title.textContent = `${a.symbol}  ·  ${a.kind}  ·  score ${fmt(a.score)}  ·  ${new Date(a.ts_ns/1e6).toISOString().slice(11,23)}`;
+  panel.style.display = 'block';
+
+  const r = await fetch(`/context?symbol=${encodeURIComponent(a.symbol)}&ts_ns=${a.ts_ns}`).then(r => r.json());
+  const ts = r.ts_ns || [], pr = r.prices || [];
+  if (ts.length < 2) {
+    poly.setAttribute('points', '');
+    line.setAttribute('x1', -1); line.setAttribute('x2', -1);
+    dot.setAttribute('cx', -1); dot.setAttribute('cy', -1);
+    meta.textContent = 'buffer empty for this symbol (detector warmup?)';
+    return;
+  }
+  const W = 800, H = 180, pad = 6;
+  const tMin = ts[0], tMax = ts[ts.length - 1];
+  const tSpan = (tMax - tMin) || 1;
+  const pMin = Math.min(...pr), pMax = Math.max(...pr);
+  const pSpan = (pMax - pMin) || 1;
+  const xOf = t => pad + (t - tMin) / tSpan * (W - 2 * pad);
+  const yOf = p => pad + (1 - (p - pMin) / pSpan) * (H - 2 * pad);
+  poly.setAttribute('points', ts.map((t, i) => `${xOf(t)},${yOf(pr[i])}`).join(' '));
+  const ax = xOf(a.ts_ns);
+  let nearest = 0, best = Infinity;
+  for (let i = 0; i < ts.length; i++) {
+    const d = Math.abs(ts[i] - a.ts_ns);
+    if (d < best) { best = d; nearest = i; }
+  }
+  line.setAttribute('x1', ax); line.setAttribute('x2', ax);
+  dot.setAttribute('cx', ax); dot.setAttribute('cy', yOf(pr[nearest]));
+  const spanSec = tSpan / 1e9;
+  let quoteStr = '';
+  if (r.quote) {
+    const q = r.quote;
+    quoteStr = ` · bid ${q.bid.toFixed(4)} / ask ${q.ask.toFixed(4)} · spread ${q.spread_bps.toFixed(1)} bps (baseline ${q.spread_baseline_bps.toFixed(1)})`;
+  }
+  meta.textContent = `${ts.length} ticks · ${spanSec.toFixed(1)}s window · price ${pMin.toFixed(4)} → ${pMax.toFixed(4)}${quoteStr}`;
+}
+
+$('ctxClose').addEventListener('click', () => $('ctxPanel').style.display = 'none');
+
+// Prime tape with recent history (called once on initial load + on reconnects)
+function primeTape() {
+  fetch('/alerts/recent?limit=500').then(r => r.json()).then(list => {
+    tapeBody.innerHTML = '';
+    list.reverse().forEach(addRow);
+  });
+}
+
+// Sparkline buffers - persist across navigation
+const SPARK_MAX = 60;
+const tpsBuf = [], p99Buf = [];
+
+function drawSpark(svgId, buf) {
+  const poly = document.querySelector(`#${svgId} polyline`);
+  if (buf.length < 2) { poly.setAttribute('points', ''); return; }
+  const min = Math.min(...buf), max = Math.max(...buf);
+  const range = (max - min) || 1;
+  const pts = buf.map((v, i) => `${i * (60 / (SPARK_MAX - 1))},${20 - ((v - min) / range) * 18 - 1}`).join(' ');
+  poly.setAttribute('points', pts);
+}
+
+function drawAlertBars(counts, windowSec) {
+  const entries = Object.entries(counts || {}).sort((a, b) => b[1] - a[1]);
+  const max = entries[0] ? entries[0][1] : 1;
+  const host = $('alertBars');
+  if (entries.length === 0) {
+    host.innerHTML = '<div class="muted" style="font-size:12px">no alerts in window</div>';
+  } else {
+    host.innerHTML = entries.map(([sym, n]) =>
+      `<div class="bar-row">
+         <div class="sym">${sym}</div>
+         <div class="bar" style="width:${Math.round(n / max * 240)}px"></div>
+         <div class="count">${n}</div>
+       </div>`).join('');
+  }
+  $('alertWindowLabel').textContent = windowSec ? `· last ${Math.round(windowSec / 60)} min` : '';
+}
+
+// ============================================================
+// WebSocket connections - opened once, persist across navigation,
+// auto-reconnect on transient drop.
+// ============================================================
+const wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
+const wsBase = `${wsProto}://${location.host}`;
+
+function connectAlerts() {
+  const ws = new WebSocket(`${wsBase}/ws/alerts`);
+  ws.onmessage = e => addRow(JSON.parse(e.data));
+  ws.onclose = () => {
+    // brief reconnect backoff; the live state badge will reflect the actual
+    // detector status via /ws/stats once that reconnects too.
+    setTimeout(connectAlerts, 1000);
+  };
+  return ws;
+}
+
+function connectStats() {
+  const ws = new WebSocket(`${wsBase}/ws/stats`);
+  ws.onmessage = e => {
+    const s = JSON.parse(e.data);
+    $('tps').textContent = s.ticks_per_sec ? Math.round(s.ticks_per_sec).toLocaleString() : '-';
+    $('p50').textContent = fmt(s.p50_us);
+    $('p95').textContent = fmt(s.p95_us);
+    $('p99').textContent = fmt(s.p99_us);
+    $('alerts_total').textContent = s.alerts_total;
+    $('symbols').textContent = (s.symbols || []).join(', ') || '-';
+
+    const badge = $('status');
+    const txt = $('statusText');
+    if (s.active) { txt.textContent = 'live'; badge.className = 'status-badge live'; }
+    else          { txt.textContent = 'paused'; badge.className = 'status-badge paused'; }
+
+    tpsBuf.push(s.ticks_per_sec || 0); while (tpsBuf.length > SPARK_MAX) tpsBuf.shift();
+    p99Buf.push(s.p99_us || 0);        while (p99Buf.length > SPARK_MAX) p99Buf.shift();
+    drawSpark('sparkTps', tpsBuf);
+    drawSpark('sparkP99', p99Buf);
+    drawAlertBars(s.alerts_by_symbol, s.alerts_window_sec);
+  };
+  ws.onclose = () => {
+    $('statusText').textContent = 'reconnecting…';
+    $('status').className = 'status-badge paused';
+    setTimeout(connectStats, 1000);
+  };
+  return ws;
+}
+
+primeTape();
+connectAlerts();
+connectStats();
+
+// Surveillance buttons
+$('btnPause').onclick  = () => postJSON('/config/active', {active: false});
+$('btnResume').onclick = () => postJSON('/config/active', {active: true});
+$('btnThresh').onclick = async () => {
+  const symbol = $('threshSymbol').value.trim().toUpperCase();
+  const z_thresh = parseFloat($('threshValue').value);
+  if (!symbol || !isFinite(z_thresh)) return;
+  const r = await postJSON('/config/threshold', {symbol, z_thresh});
+  $('threshOut').textContent =
+    `${r.symbol} → ${r.z_thresh}` + (r.applied_to_live_detector ? '' : ' (pending - symbol not seen yet)');
+};
+
+// ============================================================
+// History
+// ============================================================
+function fmtTs(ns) { return new Date(ns / 1e6).toISOString().replace('T', ' ').slice(0, 19); }
+function localToUnixNs(localStr) {
+  if (!localStr) return null;
+  const t = new Date(localStr).getTime();
+  return Number.isFinite(t) ? t * 1_000_000 : null;
+}
+
+async function refreshHistory() {
+  const params = new URLSearchParams();
+  const sym = $('fSymbol').value.trim();
+  const kind = $('fKind').value;
+  const since = localToUnixNs($('fSince').value);
+  const until = localToUnixNs($('fUntil').value);
+  const limit = parseInt($('fLimit').value, 10) || 200;
+
+  if (sym)   params.set('symbol', sym);
+  if (kind)  params.set('kind', kind);
+  if (since) params.set('since', since);
+  if (until) params.set('until', until);
+  params.set('limit', limit);
+
+  const r = await fetch(`/alerts/history?${params}`).then(r => r.json());
+  const body = $('histBody');
+  const empty = $('histEmpty');
+  body.innerHTML = '';
+  if (!r.length) {
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  for (const a of r) {
+    body.appendChild(buildCard(a, fmtTs(a.ts_ns)));
+  }
+}
+
+$('btnApply').onclick = refreshHistory;
+$('btnReset').onclick = () => {
+  $('fSymbol').value = '';
+  $('fKind').value = '';
+  $('fSince').value = '';
+  $('fUntil').value = '';
+  $('fLimit').value = '200';
+  refreshHistory();
+};
+
+// ============================================================
+// Settings
+// ============================================================
+const settingsFmt = v => v === null || v === undefined ? '-'
+                  : typeof v === 'number' ? (Number.isInteger(v) ? v.toString() : v.toFixed(4).replace(/0+$/, '').replace(/\.$/, ''))
+                  : Array.isArray(v) ? v.join(', ')
+                  : v.toString();
+
+function renderGrid(host, fields, cfg) {
+  host.innerHTML = '';
+  for (const f of fields) {
+    // Section header: ['__section__', 'Detector name']
+    if (f[0] === '__section__') {
+      const h = document.createElement('div');
+      h.className = 'form-section';
+      h.textContent = f[1];
+      host.appendChild(h);
+      continue;
+    }
+    const [label, key, hint] = f;
+    const v = cfg[key];
+    const labelEl = document.createElement('label'); labelEl.textContent = label;
+    const cell = document.createElement('div');
+    const valEl = document.createElement('div');
+    valEl.className = 'value-readonly';
+    valEl.textContent = settingsFmt(v);
+    cell.appendChild(valEl);
+    if (hint) {
+      const hintEl = document.createElement('div');
+      hintEl.className = 'hint';
+      hintEl.textContent = hint;
+      cell.appendChild(hintEl);
+    }
+    host.appendChild(labelEl);
+    host.appendChild(cell);
+  }
+}
+
+function renderOverrides(overrides) {
+  const body = $('overrideBody');
+  const empty = $('overrideEmpty');
+  body.innerHTML = '';
+  const entries = Object.entries(overrides || {});
+  if (!entries.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  for (const [sym, val] of entries) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${sym}</td>
+      <td class="num">${val}</td>
+      <td style="text-align:right">
+        <button data-sym="${sym}" data-val="${val}" class="reapply">re-apply</button>
+      </td>`;
+    body.appendChild(tr);
+  }
+  body.querySelectorAll('button.reapply').forEach(btn => {
+    btn.onclick = async () => {
+      await postJSON('/config/threshold', {
+        symbol: btn.dataset.sym, z_thresh: parseFloat(btn.dataset.val)
+      });
+      refreshSettings();
+    };
+  });
+}
+
+function renderSymbols(syms) {
+  const host = $('symbolList');
+  if (!syms || syms.length === 0) {
+    host.innerHTML = '<span class="muted" style="font-size:12px">No active symbols.</span>';
+    return;
+  }
+  host.innerHTML = syms.map(s =>
+    `<span class="sym-chip">${s}<button data-sym="${s}" class="rm" title="remove">×</button></span>`
+  ).join('');
+  host.querySelectorAll('button.rm').forEach(btn => {
+    btn.onclick = async () => {
+      const r = await postJSON('/config/symbols', {remove: [btn.dataset.sym]});
+      if (r.error) { $('symStatus').textContent = r.error; return; }
+      $('symStatus').textContent = r.removed.length ? `removed ${r.removed.join(', ')}` : 'no change';
+      refreshSettings();
+    };
+  });
+}
+
+$('btnAddSymbol').onclick = async () => {
+  const s = $('newSymbolInput').value.trim();
+  if (!s) return;
+  const r = await postJSON('/config/symbols', {add: [s]});
+  if (r.error) { $('symStatus').textContent = r.error; return; }
+  $('newSymbolInput').value = '';
+  $('symStatus').textContent = r.added.length ? `added ${r.added.join(', ')}` : '(already subscribed)';
+  refreshSettings();
+};
+
+$('btnSwitchFeed').onclick = async () => {
+  const target = $('feedSelect').value;
+  if (!confirm(`Switch feed to "${target}"? This will disconnect the current stream and clear the symbol list. The new feed starts empty until you add symbols.`)) return;
+  const r = await postJSON('/config/feed', {feed_name: target, symbols: []});
+  if (r.error) { $('feedStatus').textContent = r.error; return; }
+  $('feedStatus').textContent = r.note || `switched to ${r.feed_name}`;
+  refreshSettings();
+};
+
+async function refreshSettings() {
+  const cfg = await fetch('/config').then(r => r.json());
+  $('liveStatus').textContent = cfg.active ? 'live' : 'paused';
+  $('liveStatus').style.color = cfg.active ? 'var(--teal)' : 'var(--coral)';
+  $('liveSymbols').textContent = (cfg.symbols || []).join(', ') || '(none yet)';
+
+  renderSymbols(cfg.symbols);
+  renderOverrides(cfg.z_thresh_overrides);
+
+  // Feed dropdown + placeholder hint
+  if (cfg.feed_name) {
+    $('feedSelect').value = cfg.feed_name;
+    $('newSymbolInput').placeholder = (cfg.feed_name === 'crypto')
+      ? 'e.g. BTC/USD, ETH/USD, LTC/USD'
+      : 'e.g. AAPL, MSFT, NVDA, TSLA';
+  }
+
+  renderGrid($('cfgTrade'), [
+    ['__section__', 'Shared baseline (used by all trade detectors)'],
+    ['EWMA alpha (returns)', 'alpha',
+      'Smoothing factor for the rolling mean & MAD of log-returns. Lower = slower to adapt; higher = more responsive.'],
+    ['Min observations before scoring', 'min_obs',
+      'Detectors stay silent until this many observations accumulate, so early ticks with shaky stats can\'t produce false alerts.'],
+    ['Session gap (sec)', 'session_gap_sec',
+      'Quiet-time threshold that resets per-symbol stats. Prevents overnight gaps and weekends from polluting intraday baselines.'],
+    ['Warmup ticks (post-session)', 'warmup_ticks',
+      'Ticks ignored after a session reset before scoring resumes - lets EWMA stabilise on the new regime.'],
+    ['Use quote midprice as tick', 'use_quote_mid',
+      'When true, NBBO mid updates feed the trade detector. Helps in low-volume names (more samples); avoid if quote spam dominates.'],
+
+    ['__section__', 'robust_z - price-deviation alerts'],
+    ['z-threshold', 'default_z_thresh',
+      'Default σ-multiple a return must exceed (EWMA-MAD) to fire a robust_z alert. Per-symbol overrides supported below.'],
+
+    ['__section__', 'cusum - level-shift alerts'],
+    ['CUSUM h (threshold)', 'default_cusum_h',
+      'Page-CUSUM decision threshold (in σ-units). Cumulative drift must exceed h before a cusum alert fires.'],
+    ['CUSUM k (slack)', 'default_cusum_k',
+      'Reference offset (in σ-units). Drifts smaller than k are absorbed - controls the noise tolerance band.'],
+
+    ['__section__', 'volume_spike - trade-size anomalies'],
+    ['z-threshold', 'vol_z_thresh',
+      'σ-multiple by which log(trade size) must exceed its EWMA baseline to fire a volume_spike alert. Requires per-trade size from the feed.'],
+  ], cfg);
+
+  renderGrid($('cfgMicro'), [
+    ['__section__', 'spread_widen - bid-ask spread anomalies'],
+    ['z-threshold', 'spread_z_thresh',
+      'σ-multiple by which (ask−bid)/mid must exceed its EWMA baseline to fire a spread_widen alert.'],
+
+    ['__section__', 'obi_extreme - order-book imbalance'],
+    ['EWMA alpha', 'obi_alpha',
+      'EWMA smoothing for the imbalance signal: (bid_size − ask_size) / total_size, clipped to [−1, +1].'],
+    ['Fire threshold', 'obi_extreme_thresh',
+      '|OBI| ≥ this fires an obi_extreme alert. Range [0, 1]; e.g. 0.98 means one side has ~99× the depth of the other.'],
+    ['Re-arm threshold', 'obi_rearm_thresh',
+      'Detector stays silent after firing until |OBI| drops below this value - hysteresis to prevent alert storms.'],
+
+    ['__section__', 'quote_rate_spike - quote-update storms'],
+    ['z-threshold', 'qrate_z_thresh',
+      'σ-multiple by which the quote-update rate must exceed its EWMA baseline to fire a quote_rate_spike alert.'],
+    ['Cooldown (sec)', 'qrate_cooldown_sec',
+      'Minimum gap between consecutive quote_rate_spike alerts on the same symbol.'],
+
+    ['__section__', 'microprice_drift - order-flow asymmetry'],
+    ['z-threshold', 'micro_z_thresh',
+      'σ-multiple of (microprice − mid)/spread that fires a microprice_drift alert. Catches order-flow imbalance not yet in the mid.'],
+
+    ['__section__', 'crossed_book - bid > ask'],
+    ['Status', null,
+      'Always on - fires whenever bid > ask (data error or extreme stress). No threshold; classified as ANOMALY by default.'],
+  ], cfg);
+
+  renderGrid($('cfgMeta'), [
+    ['__section__', 'burst - cross-symbol alert clustering'],
+    ['Window (sec)', 'burst_window_sec',
+      'Rolling-count window for the Hawkes-style burst detector - how many seconds of recent alerts feed the count.'],
+    ['k-threshold', 'burst_k_thresh',
+      'Multiplier on the EWMA baseline rate. Burst fires when the window count exceeds k × baseline.'],
+    ['Baseline alpha', 'burst_baseline_alpha',
+      'EWMA decay for the cross-symbol baseline alert rate. Very small (e.g. 0.001) = slow-moving baseline so spikes really stand out.'],
+    ['Cooldown (sec)', 'burst_cooldown_sec',
+      'Minimum gap between burst alerts.'],
+
+    ['__section__', 'regime_shift - distribution change (KS test)'],
+    ['Short window', 'regime_short',
+      'Number of recent returns forming the "current" distribution in the two-sample KS test.'],
+    ['Reference window', 'regime_ref',
+      'Older "baseline" distribution the short window is compared against. Larger = more stable reference.'],
+    ['Reference stride', 'regime_ref_stride',
+      'The reference window advances by this many ticks at a time instead of every tick - keeps the test cheap.'],
+    ['Check every (ticks)', 'regime_check_every',
+      'Runs the KS test every N ticks rather than continuously, again for performance.'],
+    ['KS threshold', 'regime_ks_thresh',
+      'KS statistic at which a regime_shift alert fires. Higher = more conservative (only large distribution changes qualify).'],
+    ['Cooldown (sec)', 'regime_cooldown_sec',
+      'Minimum gap between regime_shift alerts on the same symbol.'],
+  ], cfg);
+
+  if (cfg.batch) {
+    $('batchCard').style.display = '';
+    renderGrid($('cfgBatch'), [
+      ['__section__', 'dependence_shift - t-copula on cross-asset returns'],
+      ['Universe', 'universe',
+        'Symbols included in the cross-asset dependence model.'],
+      ['Reference days', 'ref_days',
+        'Days of history used to fit the t-copula reference distribution.'],
+      ['Rolling window', 'roll',
+        'Length (in observations) of the rolling window scored against the reference.'],
+      ['z-threshold', 'z_thresh',
+        'σ-multiple of the dependence-shift score (vs. its null) at which a dependence-shift alert fires.'],
+      ['Null mu', 'null_mu',
+        'Mean of the score under the null (no shift) - fitted from the reference period.'],
+      ['Null sigma', 'null_sd',
+        'Std-dev of the score under the null - fitted from the reference period.'],
+      ['Fitted', 'fitted',
+        'Whether the reference t-copula has been fitted yet (false until first refit completes).'],
+      ['Degrees of freedom (t)', 'df',
+        'Best-LL d.o.f. for the t-copula. Lower df = heavier tails = more co-movement during stress.'],
+      ['Alerts emitted', 'alerts_emitted',
+        'Lifetime count of dependence-shift alerts since service start.'],
+      ['Last refit (s ago)', 'last_refit_sec_ago',
+        'Seconds since the reference distribution was last refit. Refits run on a schedule.'],
+      ['Last score (s ago)', 'last_score_sec_ago',
+        'Seconds since the rolling window was last scored against the reference.'],
+    ], cfg.batch);
+  }
+}
+
+$('btnPause2').onclick  = async () => { await postJSON('/config/active', {active: false}); refreshSettings(); };
+$('btnResume2').onclick = async () => { await postJSON('/config/active', {active: true});  refreshSettings(); };
+$('btnAdd').onclick = async () => {
+  const sym = $('newSym').value.trim().toUpperCase();
+  const z = parseFloat($('newThresh').value);
+  if (!sym || !isFinite(z)) { $('addOut').textContent = 'enter a symbol and number'; return; }
+  const r = await postJSON('/config/threshold', {symbol: sym, z_thresh: z});
+  $('addOut').textContent = `${r.symbol} → ${r.z_thresh}` +
+    (r.applied_to_live_detector ? '' : ' (pending - symbol not seen yet)');
+  $('newSym').value = ''; $('newThresh').value = '';
+  refreshSettings();
+};
+</script>
+
+</body>
+</html>

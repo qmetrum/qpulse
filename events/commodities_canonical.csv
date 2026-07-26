@@ -1,0 +1,13 @@
+ts_ns,symbol,event_type,description,polarity,duration_sec
+1587340800000000000,USO,wti_negative,2020-04-20 WTI futures settle at -$37 (negative oil),positive,0
+1583280000000000000,USO,opec_breakdown,2020-03-04 OPEC+ talks collapse oil -10%,positive,0
+1646611200000000000,USO,brent_130,2022-03-07 Brent over $130 Russia/Ukraine,positive,0
+1651276800000000000,UNG,euro_gas_spike,2022-04-30 European nat gas spike,positive,0
+1661472000000000000,UNG,euro_gas_peak,2022-08-26 European gas crisis peak,positive,0
+1712966400000000000,USO,iran_threat_oil,2024-04-13 Iran/Israel oil spike,positive,0
+1697932800000000000,GLD,gold_breakout_2023,2023-10-22 gold safe-haven bid,positive,0
+1723593600000000000,GLD,gold_ath_aug2024,2024-08-14 gold all-time high,positive,0
+1583712000000000000,USO,covid_oil_crash,2020-03-09 oil collapses on COVID + price war,positive,0
+1672790400000000000,USO,quiet_2023_jan_oil,2023-01-04 to 01-11 calm post-holiday oil,quiet,604800
+1689724800000000000,GLD,quiet_2023_jul_gold,2023-07-19 to 07-26 calm summer gold,quiet,604800
+1722124800000000000,USO,quiet_2024_jul_oil,2024-07-28 to 08-04 calm pre-aug-rout oil,quiet,604800

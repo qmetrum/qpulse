@@ -1,0 +1,4 @@
+ts_ns,symbol,event_type,description
+1704207600000000000,AAPL,earnings_release,Q1-2024 earnings announcement
+1704294000000000000,NVDA,sec_halt,Volatility halt triggered at 14:37:12 ET
+1704380400000000000,SPY,macro,FOMC rate decision 2:00 PM ET

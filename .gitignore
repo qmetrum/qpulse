@@ -1,0 +1,36 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Runtime artifacts
+*.db
+*.db-wal
+*.db-shm
+qpulse_config.json
+qpulse_live.json
+recordings/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Claude Code local session settings
+.claude/
+
+# Legacy pre-Qpulse code (kept locally, not part of the repo)
+archive/
+
+# Backtest outputs (regenerable)
+gate/data/*_alerts.csv
+gate/data/*_replay.csv
+
+# Logs
+*.log

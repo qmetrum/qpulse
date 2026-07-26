@@ -1,0 +1,11 @@
+ts_ns,symbol,event_type,description,polarity,duration_sec
+1517788800000000000,^VIX,volmageddon,2018-02-05 VIX +116% XIV blowup,positive,0
+1584316800000000000,^VIX,covid_vix_82,2020-03-16 VIX hits 82 COVID peak fear,positive,0
+1722816000000000000,^VIX,vix_65_aug2024,2024-08-05 VIX intraday spike to 65 yen-carry,positive,0
+1583712000000000000,^VIX,covid_vix_breakout,2020-03-09 VIX breaks 50,positive,0
+1645660800000000000,^VIX,vix_russia_invasion,2022-02-24 VIX +20 pts invasion day,positive,0
+1664150400000000000,^VIX,vix_gilt_crisis,2022-09-26 VIX surges UK rates spillover,positive,0
+1678406400000000000,^VIX,vix_svb_spike,2023-03-10 VIX rises SVB collapse,positive,0
+1622073600000000000,^VIX,quiet_2021_may_vix,2021-05-27 to 06-03 calm VIX low,quiet,604800
+1656374400000000000,^VIX,quiet_2022_jun_vix,2022-06-28 to 07-05 mid-summer calm,quiet,604800
+1700524800000000000,^VIX,quiet_2023_nov_vix,2023-11-21 to 11-28 calm pre-pivot,quiet,604800

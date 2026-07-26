@@ -1,0 +1,9 @@
+ts_ns,symbol,event_type,description,polarity,duration_sec
+1664150400000000000,GBPUSD=X,gbp_flash_crash,2022-09-26 GBP flash to 1.03 vs USD,positive,0
+1664323200000000000,GBPUSD=X,boe_emergency_buy,2022-09-28 BoE emergency gilt purchases,positive,0
+1722816000000000000,JPYUSD=X,jpy_carry_unwind,2024-08-05 JPY carry trade unwind USDJPY -3%,positive,0
+1645660800000000000,EURUSD=X,euro_russia_invasion,2022-02-24 EUR sells off Russia invasion,positive,0
+1583971200000000000,DXY,usd_covid_surge,2020-03-12 USD strength surge dollar funding,positive,0
+1583712000000000000,DXY,usd_safe_haven_covid,2020-03-09 DXY rallies as safe haven,positive,0
+1658016000000000000,DXY,quiet_2022_jul_fx,2022-07-17 to 07-24 mid-summer FX calm,quiet,604800
+1693440000000000000,DXY,quiet_2023_aug_fx,2023-08-31 to 09-07 calm pre-Sep volatility,quiet,604800

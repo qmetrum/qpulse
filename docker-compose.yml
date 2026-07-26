@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  hft:
+    build:
+      context: ./services/hft_anomaly_service
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./services/hft_anomaly_service:/code
+      - ./configs:/configs:ro
+    # Detector tuning comes from configs/<profile>.env.
+    # Switch profile: `HFT_PROFILE=minute_bars docker compose up hft`
+    # Available: synthetic (default), minute_bars, ticks, crypto
+    env_file:
+      - ./configs/${HFT_PROFILE:-synthetic}.env
+    environment:
+      - POLYGON_API_KEY=${POLYGON_API_KEY:-}
+      - ALPACA_API_KEY=${ALPACA_API_KEY:-}
+      - ALPACA_API_SECRET=${ALPACA_API_SECRET:-}
+      - ALPACA_FEED=${ALPACA_FEED:-iex}
+      - HFT_SOURCE=${HFT_SOURCE:-synthetic}
+      - HFT_SYMBOLS=${HFT_SYMBOLS:-AAPL,MSFT,SPY,NVDA}
+      - HFT_TPS=${HFT_TPS:-5000}
+      - HFT_CSV_PATH=${HFT_CSV_PATH:-}
+      - HFT_SPEED=${HFT_SPEED:-60}
+      - HFT_DB_PATH=${HFT_DB_PATH:-/code/qpulse.db}
+      - HFT_WEBHOOK_URL=${HFT_WEBHOOK_URL:-}
+      - HFT_WEBHOOK_MIN_SCORE=${HFT_WEBHOOK_MIN_SCORE:-0}
+      - HFT_API_TOKEN=${HFT_API_TOKEN:-}
+      - HFT_CONFIG_PATH=${HFT_CONFIG_PATH:-/code/qpulse_config.json}
+    # Default: live streaming service + UI on http://localhost:8080/
+    # For latency benchmark instead: docker compose run --rm hft python -m app.bench
+    command: python -m app.live

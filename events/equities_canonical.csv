@@ -1,0 +1,27 @@
+ts_ns,symbol,event_type,description,polarity,duration_sec
+1611532800000000000,GME,short_squeeze_start,2021-01-25 GameStop short squeeze begins,positive,0
+1611705600000000000,GME,short_squeeze_peak,2021-01-27 GME peak retail squeeze,positive,0
+1611792000000000000,GME,broker_restrictions,2021-01-28 Robinhood restricts buying multiple names,positive,0
+1622592000000000000,AMC,amc_squeeze,2021-06-02 AMC squeeze rally,positive,0
+1643846400000000000,META,meta_subscriber_crash,2022-02-03 META -26% on first DAU decline,positive,0
+1650326400000000000,NFLX,nflx_subscriber_crash,2022-04-19 NFLX -35% subscriber loss,positive,0
+1650844800000000000,TWTR,twtr_buyout_offer,2022-04-25 Musk Twitter buyout deal,positive,0
+1684886400000000000,NVDA,nvda_ai_guidance_shock,2023-05-24 NVDA +24% AH on AI guidance,positive,0
+1692748800000000000,NVDA,nvda_q2_earnings_2023,2023-08-23 NVDA Q2 earnings AI surge,positive,0
+1708473600000000000,NVDA,nvda_q4_earnings_2024,2024-02-21 NVDA Q4 earnings beat,positive,0
+1717977600000000000,NVDA,nvda_split,2024-06-10 NVDA 10-for-1 stock split,positive,0
+1598832000000000000,TSLA,tsla_split,2020-08-31 TSLA 5-for-1 stock split,positive,0
+1608508800000000000,TSLA,tsla_sp500_inclusion,2020-12-21 TSLA enters S&P 500,positive,0
+1620864000000000000,TSLA,tsla_crypto_drop,2021-05-13 TSLA -8% on Musk bitcoin reversal,positive,0
+1598918400000000000,AAPL,aapl_split,2020-09-01 AAPL 4-for-1 stock split,positive,0
+1678406400000000000,SIVB,svb_collapse,2023-03-10 SVB closed by FDIC,positive,0
+1683849600000000000,FRC,frc_collapse,2023-05-01 First Republic taken over by JPM,positive,0
+1607385600000000000,DASH,doordash_ipo,2020-12-09 DoorDash IPO +86%,positive,0
+1638835200000000000,RIVN,rivian_post_ipo,2021-12-07 Rivian peak then crash,positive,0
+1604880000000000000,PFE,pfizer_vaccine_news,2020-11-09 PFE +15% vaccine effective,positive,0
+1583712000000000000,AAPL,covid_aapl_drawdown,2020-03-09 AAPL major drawdown begins,positive,0
+1564963200000000000,quiet_2019_aug,SPY,quiet_pre_repo,2019-08-05 to 08-12 calm pre-repo crisis,quiet,604800
+1605139200000000000,quiet_2020_nov_postvax,SPY,quiet_post_election,2020-11-12 to 11-19 calm post-election post-vaccine,quiet,604800
+1631318400000000000,quiet_2021_sep_a,SPY,quiet_2021_sep,2021-09-11 to 09-18 fall consolidation,quiet,604800
+1659916800000000000,quiet_2022_aug,SPY,quiet_post_luna_pre_jh,2022-08-08 to 08-15 between Luna and Jackson Hole,quiet,604800
+1697760000000000000,quiet_2023_oct,SPY,quiet_pre_pivot,2023-10-20 to 10-27 pre-Fed pivot,quiet,604800

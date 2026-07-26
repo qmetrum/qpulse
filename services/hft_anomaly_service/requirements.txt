@@ -1,0 +1,10 @@
+uvloop
+numpy
+websockets
+fastapi
+uvicorn[standard]
+
+# sources/* helpers and batch path (not needed for the hot path)
+pandas
+yfinance
+scipy

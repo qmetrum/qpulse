@@ -1,0 +1,18 @@
+{
+    # Replace with your contact email — Let's Encrypt requires it for cert issuance.
+    email YOUR_EMAIL@example.com
+}
+
+# Replace with your real domain.
+qpulse.example.com {
+    encode zstd gzip
+    reverse_proxy 127.0.0.1:8080 {
+        # WebSocket upgrades work transparently with reverse_proxy in Caddy 2.
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+    }
+    log {
+        output file /var/log/caddy/qpulse.log
+        format console
+    }
+}

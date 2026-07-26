@@ -1,0 +1,79 @@
+{
+  "criteria": {
+    "C1_corroboration_pct_min": 0.6,
+    "C2_lift_pct_min": 0.15,
+    "C3_fp_per_day_max": 0.1,
+    "C4_kl_max": 0.5,
+    "C5_fit_seconds_max": 30.0,
+    "tcopula_z_thresh": 3.0,
+    "mps_z_thresh": 4.0,
+    "ref_days": 252,
+    "roll": 5,
+    "chi": 4,
+    "d": 8,
+    "fit_n_restarts": 3,
+    "fit_max_iter": 500
+  },
+  "fit_seconds": 19.16974925994873,
+  "n_params": 832,
+  "tcopula_df": 20.0,
+  "mps_null_mu": -71.29782299147398,
+  "mps_null_sd": 2.895156203417863,
+  "tc_null_mu": 20.21031858701231,
+  "tc_null_sd": 6.9845480570645915,
+  "n_holdout_z_obs": 795,
+  "tc_events_holdout": 35,
+  "mps_events_holdout": 697,
+  "C1": {
+    "pass": true,
+    "value": 0.7428571428571429,
+    "threshold": 0.6,
+    "note": "26/35 t-copula events corroborated"
+  },
+  "C2": {
+    "pass": true,
+    "value": 0.9626972740315638,
+    "threshold": 0.15,
+    "note": "671/697 MPS firings unique to MPS"
+  },
+  "C3": {
+    "pass": false,
+    "windows": [
+      {
+        "start_idx": 16,
+        "end_idx": 46,
+        "firings": 27,
+        "per_day": 0.9,
+        "pass": false
+      },
+      {
+        "start_idx": 46,
+        "end_idx": 76,
+        "firings": 24,
+        "per_day": 0.8,
+        "pass": false
+      },
+      {
+        "start_idx": 97,
+        "end_idx": 127,
+        "firings": 22,
+        "per_day": 0.733,
+        "pass": false
+      }
+    ],
+    "threshold": 0.1
+  },
+  "C4": {
+    "pass": false,
+    "value": 2.7884600789027583,
+    "threshold": 0.5,
+    "note": "KL(MPS_ref || MPS_second) \u2248 2.788 nats"
+  },
+  "C5": {
+    "pass": true,
+    "value": 19.16974925994873,
+    "threshold": 30.0
+  },
+  "overall_pass": false,
+  "timestamp": "2026-05-07T16:36:52.041412+00:00"
+}

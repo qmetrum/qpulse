@@ -1,0 +1,11 @@
+ts_ns,symbol,event_type,description,polarity,duration_sec
+1647388800000000000,TLT,fed_first_hike,2022-03-16 Fed first 25bp hike yields jump,positive,0
+1655078400000000000,TLT,cpi_shock_jun2022,2022-06-13 hot June CPI yields surge,positive,0
+1664150400000000000,TLT,gilt_crisis_spillover,2022-09-26 UK gilt crisis spills to USTs,positive,0
+1696291200000000000,TLT,ust_yield_4_8,2023-10-03 10Y yield breaks 4.8% TLT crashes,positive,0
+1702425600000000000,TLT,fed_pivot_dec_2023,2023-12-13 Fed pivot rates plunge,positive,0
+1722816000000000000,TLT,recession_yield_drop,2024-08-05 yields plunge on recession fear,positive,0
+1706659200000000000,TLT,boj_ycc_speculation,2024-01-31 BoJ YCC end speculation,positive,0
+1583712000000000000,TLT,covid_rates_collapse,2020-03-09 yields collapse to ZLB COVID,positive,0
+1668643200000000000,TLT,quiet_2022_nov_rates,2022-11-16 to 11-23 mid-Nov rates calm,quiet,604800
+1689638400000000000,TLT,quiet_2023_jul_rates,2023-07-18 to 07-25 mid-summer rates calm,quiet,604800
