@@ -103,17 +103,46 @@ The batch path is configured with `HFT_BATCH_ENABLED`, `HFT_BATCH_UNIVERSE`, `HF
 
 ## Validation
 
-All numbers below are sourced from files in this repo.
+Every detection number below is reproducible from committed inputs. Run:
 
-| Result | Numbers | Source |
-|---|---|---|
-| Hot path — BTC daily, 10 labeled crypto crises + 6 quiet windows | Recall 60% (6/10), median time-to-detect 0 ms, false positives 0.05/day on quiet windows | `docs/qpulse_one_pager.md`, `docs/qpulse_pitch.md` |
-| Batch path — 8-asset macro basket, 9 labeled macro events + 5 quiet windows | Recall 67% (6/9), false positives 0.00/day on quiet windows | `docs/qpulse_one_pager.md`, `docs/qpulse_pitch.md` |
-| Performance | p99 end-to-end latency < 500 µs on real Alpaca WS data; 280k ticks/sec single-core synthetic | `docs/qpulse_one_pager.md` |
+```bash
+bash gate/validate.sh
+```
+
+It verifies the frozen inputs against their checksums, asserts that all event
+catalogs parse, re-derives each figure, and exits nonzero if any of them drifts.
+
+Each detector path is scored against two catalogs: the **full** committed event
+catalog, and the smaller **pitch-era subset** the originally published figures
+were computed on. The full-catalog numbers are lower. Both are shown because
+quoting only the subset would flatter the results.
+
+| Measure | Full catalog | Pitch-era subset | Artifact |
+|---|---|---|---|
+| Hot path v1 — BTC daily | **38.1%** recall (8/21), CI 21–59%; **0.06** FP/day (4 alerts / 63 quiet days), CI 0.02–0.16 | 60.0% (6/10), CI 31–83%; 0.05 FP/day (2 / 42 days) | `hot_full_v1.json` / `hot_pitch_v1.json` |
+| Hot path v2 — reproducible generation | **19.0%** recall (4/21), CI 8–40%; **0.03** FP/day (2 / 63 days), CI 0.00–0.11 | 40.0% (4/10), CI 17–69%; 0.00 FP/day (0 / 42 days) | `hot_full_v2.json` / `hot_v2_baseline.json` |
+| Batch path — 8-asset macro basket | **35.0%** recall (7/20), CI 18–57%; **0.00** FP/day (0 / 63 days), CI 0.00–0.06 | 66.7% (6/9), CI 35–88%; 0.00 FP/day (0 / 35 days) | `batch_full_v1.json` / `batch_pitch_v1.json` |
+| Performance | \_ | \_ | **No committed artifact.** The p99 < 500 µs and 280k ticks/sec figures in `docs/` come from an unrecorded run and are not reproducible here. Re-measure with `python -m app.bench`. |
+
+Artifacts live in `results/eval_pitch_v1/`. Tolerances: ±86400 s hot, ±259200 s batch; no kinds filter.
+
+A large share of the full-catalog misses are structural rather than detector
+failures: the alert artifacts end 2023-03-13, while the catalogs were extended
+afterwards, so 4 crypto and 6 macro events post-date any possible alert. They are
+counted as misses above rather than quietly excluded — excluding them would give
+roughly 47% (8/17) hot v1 and 50% (7/14) batch.
 | MPS-copula gate (Stage 1) | MPS failed 3 of 5 pre-registered criteria (beat Gaussian on only 1/3 events, failed timing, more spurious than t-copula on quiet windows) → the classical t-copula shipped as `dependence_shift` | `gate/results/verdict.md`, `gate/GATE.md`; raw scores in `gate/results/scores.csv`, `gate/results/timing.csv` |
 | tn_anomaly (MPS Born-machine) gate | REJECT — passed corroboration (74.3%), lift (96.3%), and compute budget (19.2 s), but failed quiet-window FP rate (0.73–0.90/day vs. ≤ 0.10) and fit stability (KL ≈ 2.79 nats vs. ≤ 0.5); not integrated | `services/hft_anomaly_service/gate/results/tn_anomaly_verdict.md`, spec in `services/hft_anomaly_service/docs/tn_anomaly_gate.md` |
 
-Honest framing (from the one-pager): all shipped math is classical; recall is measured against small event catalogs (10 and 9 events), and the FP rate is measured against explicit negative-control quiet windows.
+### What these numbers do and don't establish
+
+- All shipped math is classical. The quantum-inspired alternatives were tested and rejected — see both gate verdicts above.
+- The catalogs are small (21 and 20 positive events on the full set). The confidence intervals above are the honest width that follows, and they are wide — wide enough that most of these rows are not statistically distinguishable from each other. Treat the point estimates as indicative, not as performance guarantees.
+- The FP rate is measured on explicit negative-control quiet windows, not on the full sample — it answers "does it cry wolf during calm periods", not "what fraction of all alerts are false".
+- **"Median time-to-detect 0 ms" was a units artifact and has been withdrawn.** Every timestamp in these artifacts is a daily bar, so the only detectable values are whole days: "0" means *same bar*, not sub-millisecond latency. On hot v1, 2 of the 6 detections in fact fire a day *before* the labeled timestamp. The sub-millisecond figures elsewhere in this README describe the processing hot path, which is a different quantity entirely and is not evidenced by these catalogs.
+- **Two hot-path rows exist for one reason:** the v1 alerts are the artifact behind the published pitch figure, but the command that generated them was never recorded and could not be recovered, so evaluation is reproducible while generation is not. v2 pins a generation command chosen by a rule fixed in advance, and scores lower on recall. `gate/frozen/V2_BASELINE.md` documents the rule, the result, and why the two rows are not a before/after comparison.
+- `bitcoin_etf_approval` (2024-01-11) post-dates the last alert in both artifacts (2023-03-13), so no configuration could detect it. It is still counted as a miss in the denominator rather than dropped.
+- Growing the catalogs to tighten these intervals is roadmap phases P3–P6 (`docs/ROADMAP.md`).
 
 ## Deployment
 

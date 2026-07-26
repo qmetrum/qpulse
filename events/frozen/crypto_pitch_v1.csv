@@ -1,0 +1,17 @@
+ts_ns,symbol,event_type,description,polarity,duration_sec
+1621814400000000000,BTC-USD,china_mining_ban,2021-05-24 China intensifies bitcoin mining crackdown,positive,0
+1637884800000000000,BTC-USD,taproot_ath_aftermath,2021-11-26 ATH followed by multi-day drawdown,positive,0
+1652054400000000000,BTC-USD,ust_depeg_begins,2022-05-09 UST stablecoin depegs LUNA collapse begins,positive,0
+1652140800000000000,BTC-USD,luna_death_spiral,2022-05-10 LUNA/UST ecosystem collapse peak,positive,0
+1654646400000000000,BTC-USD,celsius_halt,2022-06-08 Celsius suspends withdrawals,positive,0
+1667865600000000000,BTC-USD,ftx_bank_run,2022-11-08 FTX insolvency revealed FTT crashes,positive,0
+1668124800000000000,BTC-USD,ftx_bankruptcy,2022-11-11 FTX files Chapter 11,positive,0
+1678492800000000000,BTC-USD,usdc_depeg,2023-03-11 USDC briefly depegs after SVB exposure,positive,0
+1678579200000000000,BTC-USD,svb_contagion,2023-03-12 SVB contagion crypto rally on banking fear,positive,0
+1705017600000000000,BTC-USD,bitcoin_etf_approval,2024-01-11 SEC approves spot Bitcoin ETFs,positive,0
+1568592000000000000,BTC-USD,quiet_2019q3,2019-09-16 to 09-23 pre-Q4 consolidation,quiet,604800
+1594598400000000000,BTC-USD,quiet_2020_summer,2020-07-13 to 07-20 summer sideways,quiet,604800
+1613952000000000000,BTC-USD,quiet_2021_feb,2021-02-22 to 03-01 post-Coinbase-IPO settle,quiet,604800
+1631491200000000000,BTC-USD,quiet_2021_sep,2021-09-13 to 09-20 fall 2021 consolidation,quiet,604800
+1659916800000000000,BTC-USD,quiet_2022_aug,2022-08-08 to 08-15 between Luna and FTX,quiet,604800
+1675641600000000000,BTC-USD,quiet_2023_feb,2023-02-06 to 02-13 early 2023 pre-SVB,quiet,604800

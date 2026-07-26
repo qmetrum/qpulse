@@ -1,0 +1,148 @@
+{
+  "generated_at": "2026-07-26T23:57:23+00:00",
+  "inputs": {
+    "alerts_path": "gate/frozen/btc_alerts_v2.csv",
+    "alerts_sha256": "c62573fc11180786fb8f4d7c6ec92f85b9822c8db828061f277a1b51b8e7028c",
+    "events_path": "events/frozen/crypto_pitch_v1.csv",
+    "events_sha256": "11d0b44dfd85fbbaa38d89755b153cc84b2727bd5f55edcabeca1b96d009a181",
+    "kinds_filter": null,
+    "tolerance_sec": 86400.0
+  },
+  "missed_events": [
+    {
+      "description": "2021-05-24 China intensifies bitcoin mining crackdown",
+      "event_type": "china_mining_ban",
+      "symbol": "BTC-USD",
+      "ts_ns": 1621814400000000000
+    },
+    {
+      "description": "2021-11-26 ATH followed by multi-day drawdown",
+      "event_type": "taproot_ath_aftermath",
+      "symbol": "BTC-USD",
+      "ts_ns": 1637884800000000000
+    },
+    {
+      "description": "2022-06-08 Celsius suspends withdrawals",
+      "event_type": "celsius_halt",
+      "symbol": "BTC-USD",
+      "ts_ns": 1654646400000000000
+    },
+    {
+      "description": "2022-11-11 FTX files Chapter 11",
+      "event_type": "ftx_bankruptcy",
+      "symbol": "BTC-USD",
+      "ts_ns": 1668124800000000000
+    },
+    {
+      "description": "2023-03-11 USDC briefly depegs after SVB exposure",
+      "event_type": "usdc_depeg",
+      "symbol": "BTC-USD",
+      "ts_ns": 1678492800000000000
+    },
+    {
+      "description": "2024-01-11 SEC approves spot Bitcoin ETFs",
+      "event_type": "bitcoin_etf_approval",
+      "symbol": "BTC-USD",
+      "ts_ns": 1705017600000000000
+    }
+  ],
+  "results": {
+    "alerts_coverage_ts_ns": [
+      1546732800000000000,
+      1678752000000000000
+    ],
+    "alerts_in_quiet": 0,
+    "alerts_total": 42,
+    "detection_rate": 0.4,
+    "detection_rate_ci95": [
+      0.16817758120350967,
+      0.6873304525498135
+    ],
+    "fp_per_day_ci95": [
+      0.0,
+      0.08783046319318888
+    ],
+    "fp_per_day_in_quiet": 0.0,
+    "mean_ttd_ms": 0.0,
+    "median_ttd_ms": 0.0,
+    "per_event_type": {
+      "bitcoin_etf_approval": [
+        0,
+        1,
+        0.0
+      ],
+      "celsius_halt": [
+        0,
+        1,
+        0.0
+      ],
+      "china_mining_ban": [
+        0,
+        1,
+        0.0
+      ],
+      "ftx_bank_run": [
+        1,
+        1,
+        1.0
+      ],
+      "ftx_bankruptcy": [
+        0,
+        1,
+        0.0
+      ],
+      "luna_death_spiral": [
+        1,
+        1,
+        1.0
+      ],
+      "svb_contagion": [
+        1,
+        1,
+        1.0
+      ],
+      "taproot_ath_aftermath": [
+        0,
+        1,
+        0.0
+      ],
+      "usdc_depeg": [
+        0,
+        1,
+        0.0
+      ],
+      "ust_depeg_begins": [
+        1,
+        1,
+        1.0
+      ]
+    },
+    "per_kind_attributed_positive": {
+      "cusum": 3,
+      "robust_z": 2
+    },
+    "per_kind_in_quiet": {},
+    "per_kind_total": {
+      "cusum": 20,
+      "robust_z": 22
+    },
+    "positive_events_detected": 4,
+    "positive_events_outside_alert_coverage": [
+      "bitcoin_etf_approval"
+    ],
+    "positive_events_total": 10,
+    "quiet_total_days": 42.0,
+    "quiet_violation_rate": 0.0,
+    "quiet_windows_total": 6,
+    "quiet_windows_violated": 0,
+    "timestamp_resolution_ns": 86400000000000,
+    "ttd_per_event_ns": [
+      0,
+      -86400000000000,
+      0,
+      86400000000000
+    ],
+    "unattributed": 37
+  },
+  "schema": "qpulse.evaluate/1"
+}

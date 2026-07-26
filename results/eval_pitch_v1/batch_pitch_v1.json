@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-07-26T23:57:23+00:00",
+  "inputs": {
+    "alerts_path": "gate/frozen/core_dep_alerts_pitch_v1.csv",
+    "alerts_sha256": "bd4bb76cf3098087970ed6e53b69e580cefa672a0b3e51647632220bb63e7c37",
+    "events_path": "events/frozen/macro_pitch_v1.csv",
+    "events_sha256": "39a0f918724e57ec4398e3cf65f2aba01d32253c6e61d9895917a771553b6d31",
+    "kinds_filter": null,
+    "tolerance_sec": 259200.0
+  },
+  "missed_events": [
+    {
+      "description": "2022-02-24 Russia invades Ukraine flight to safety",
+      "event_type": "russia_invades_ukraine",
+      "symbol": "SPY",
+      "ts_ns": 1645660800000000000
+    },
+    {
+      "description": "2022-03-16 Fed first 25bp hike of cycle bond-equity decorrelation",
+      "event_type": "fed_first_hike",
+      "symbol": "SPY",
+      "ts_ns": 1647388800000000000
+    },
+    {
+      "description": "2022-09-26 UK LDI crisis GBP flash crash global rates spike",
+      "event_type": "gbp_flash_crash",
+      "symbol": "SPY",
+      "ts_ns": 1664150400000000000
+    }
+  ],
+  "results": {
+    "alerts_coverage_ts_ns": [
+      1582329600000000000,
+      1679270400000000000
+    ],
+    "alerts_in_quiet": 0,
+    "alerts_total": 48,
+    "detection_rate": 0.6666666666666666,
+    "detection_rate_ci95": [
+      0.35419734749908977,
+      0.879418401317257
+    ],
+    "fp_per_day_ci95": [
+      0.0,
+      0.10539655583182667
+    ],
+    "fp_per_day_in_quiet": 0.0,
+    "mean_ttd_ms": 43200000.0,
+    "median_ttd_ms": 0.0,
+    "per_event_type": {
+      "covid_black_monday": [
+        1,
+        1,
+        1.0
+      ],
+      "cpi_shock": [
+        1,
+        1,
+        1.0
+      ],
+      "fed_emergency_cut": [
+        1,
+        1,
+        1.0
+      ],
+      "fed_first_hike": [
+        0,
+        1,
+        0.0
+      ],
+      "fed_unlimited_qe": [
+        1,
+        1,
+        1.0
+      ],
+      "gbp_flash_crash": [
+        0,
+        1,
+        0.0
+      ],
+      "russia_invades_ukraine": [
+        0,
+        1,
+        0.0
+      ],
+      "signature_bank": [
+        1,
+        1,
+        1.0
+      ],
+      "svb_failure": [
+        1,
+        1,
+        1.0
+      ]
+    },
+    "per_kind_attributed_positive": {
+      "dependence_shift": 22
+    },
+    "per_kind_in_quiet": {},
+    "per_kind_total": {
+      "dependence_shift": 48
+    },
+    "positive_events_detected": 6,
+    "positive_events_outside_alert_coverage": [],
+    "positive_events_total": 9,
+    "quiet_total_days": 35.0,
+    "quiet_violation_rate": 0.0,
+    "quiet_windows_total": 5,
+    "quiet_windows_violated": 0,
+    "timestamp_resolution_ns": 86400000000000,
+    "ttd_per_event_ns": [
+      0,
+      0,
+      0,
+      0,
+      259200000000000,
+      0
+    ],
+    "unattributed": 26
+  },
+  "schema": "qpulse.evaluate/1"
+}

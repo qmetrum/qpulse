@@ -28,11 +28,13 @@ def run_detector(
     cusum_k: float,
     session_gap_sec: float,
     warmup_ticks: int,
+    min_obs: int = 0,
 ) -> List[Alert]:
     def factory(sym: str) -> PerSymbolDetector:
         return PerSymbolDetector(
             sym, alpha=alpha, z_thresh=z_thresh, cusum_h=cusum_h, cusum_k=cusum_k,
             session_gap_sec=session_gap_sec, warmup_ticks=warmup_ticks,
+            min_obs=min_obs,
         )
     router = Router(factory=factory)
     alerts: List[Alert] = []
@@ -48,6 +50,12 @@ def main() -> None:
     p.add_argument("--cusum-k", type=float, default=0.5)
     p.add_argument("--session-gap-sec", type=float, default=600.0)
     p.add_argument("--warmup-ticks", type=int, default=5)
+    # Default 0 preserves historic sweep behaviour — configs/minute_bars.env's
+    # knee was found without a min_obs gate, so changing the default here would
+    # silently invalidate its provenance. Live runs set their own (state.py: 100,
+    # configs/crypto.env: 200); pass this explicitly to match a live profile.
+    p.add_argument("--min-obs", type=int, default=0,
+                   help="min observations before a detector may fire (default 0 = sweep legacy)")
     p.add_argument("--z-grid", default="3.0,3.5,4.0,4.5,5.0,6.0,8.0")
     p.add_argument("--h-grid", default="4.0,5.0,6.0,8.0,10.0")
     args = p.parse_args()
@@ -60,7 +68,8 @@ def main() -> None:
     print(f"input:        {args.input}")
     print(f"ticks:        {n:,}   symbols: {symbols}   span: {sym_hours:.1f} sym·hr")
     print(f"fixed params: alpha={args.alpha}  cusum_k={args.cusum_k}  "
-          f"session_gap={int(args.session_gap_sec)}s  warmup={args.warmup_ticks}")
+          f"session_gap={int(args.session_gap_sec)}s  warmup={args.warmup_ticks}  "
+          f"min_obs={args.min_obs}")
     print()
 
     z_grid = [float(x) for x in args.z_grid.split(",")]
@@ -77,7 +86,7 @@ def main() -> None:
         for h in h_grid:
             alerts = run_detector(
                 ticks, args.alpha, z, h, args.cusum_k,
-                args.session_gap_sec, args.warmup_ticks,
+                args.session_gap_sec, args.warmup_ticks, args.min_obs,
             )
             n_z = sum(1 for a in alerts if a.kind == "robust_z")
             n_c = sum(1 for a in alerts if a.kind == "cusum")

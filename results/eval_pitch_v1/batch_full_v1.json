@@ -1,0 +1,246 @@
+{
+  "generated_at": "2026-07-26T23:57:23+00:00",
+  "inputs": {
+    "alerts_path": "gate/frozen/core_dep_alerts_pitch_v1.csv",
+    "alerts_sha256": "bd4bb76cf3098087970ed6e53b69e580cefa672a0b3e51647632220bb63e7c37",
+    "events_path": "events/macro_canonical.csv",
+    "events_sha256": "4a46b467fe7e262168c599cc649bb86540f388ed939da82731346f4aa194ec2b",
+    "kinds_filter": null,
+    "tolerance_sec": 259200.0
+  },
+  "missed_events": [
+    {
+      "description": "2022-02-24 Russia invades Ukraine flight to safety",
+      "event_type": "russia_invades_ukraine",
+      "symbol": "SPY",
+      "ts_ns": 1645660800000000000
+    },
+    {
+      "description": "2022-03-16 Fed first 25bp hike of cycle bond-equity decorrelation",
+      "event_type": "fed_first_hike",
+      "symbol": "SPY",
+      "ts_ns": 1647388800000000000
+    },
+    {
+      "description": "2022-09-26 UK LDI crisis GBP flash crash global rates spike",
+      "event_type": "gbp_flash_crash",
+      "symbol": "SPY",
+      "ts_ns": 1664150400000000000
+    },
+    {
+      "description": "2018-02-05 S&P -4.1% Volmageddon XIV implosion",
+      "event_type": "volmageddon",
+      "symbol": "SPY",
+      "ts_ns": 1517788800000000000
+    },
+    {
+      "description": "2020-11-09 SPY +1.2% Pfizer vaccine effective",
+      "event_type": "pfizer_vaccine_news",
+      "symbol": "SPY",
+      "ts_ns": 1604880000000000000
+    },
+    {
+      "description": "2021-01-27 SPY -2.6% GME-driven hedge unwind",
+      "event_type": "gme_market_contagion",
+      "symbol": "SPY",
+      "ts_ns": 1611705600000000000
+    },
+    {
+      "description": "2022-01-24 SPY first major 2022 selloff",
+      "event_type": "jan_selloff_2022",
+      "symbol": "SPY",
+      "ts_ns": 1643011200000000000
+    },
+    {
+      "description": "2022-10-13 SPY epic intraday reversal",
+      "event_type": "oct_cpi_relief_then",
+      "symbol": "SPY",
+      "ts_ns": 1665619200000000000
+    },
+    {
+      "description": "2023-04-03 OPEC surprise output cut",
+      "event_type": "opec_surprise_cut",
+      "symbol": "SPY",
+      "ts_ns": 1680480000000000000
+    },
+    {
+      "description": "2023-09-21 SPY -1.6% Fed hawkish hold",
+      "event_type": "fed_hawkish_hold",
+      "symbol": "SPY",
+      "ts_ns": 1695254400000000000
+    },
+    {
+      "description": "2023-12-13 SPY +1.4% Fed dot plot pivot",
+      "event_type": "fed_pivot_signal",
+      "symbol": "SPY",
+      "ts_ns": 1702425600000000000
+    },
+    {
+      "description": "2024-04-15 SPY -1.2% Iran/Israel escalation",
+      "event_type": "iran_israel_tension",
+      "symbol": "SPY",
+      "ts_ns": 1713139200000000000
+    },
+    {
+      "description": "2024-08-05 SPY -3% global rout JPY carry",
+      "event_type": "yen_carry_unwind",
+      "symbol": "SPY",
+      "ts_ns": 1722816000000000000
+    }
+  ],
+  "results": {
+    "alerts_coverage_ts_ns": [
+      1582329600000000000,
+      1679270400000000000
+    ],
+    "alerts_in_quiet": 0,
+    "alerts_total": 48,
+    "detection_rate": 0.35,
+    "detection_rate_ci95": [
+      0.18118954786794464,
+      0.5671494897805354
+    ],
+    "fp_per_day_ci95": [
+      0.0,
+      0.05855364212879259
+    ],
+    "fp_per_day_in_quiet": 0.0,
+    "mean_ttd_ms": 37028571.42857143,
+    "median_ttd_ms": 0.0,
+    "per_event_type": {
+      "covid_black_monday": [
+        1,
+        1,
+        1.0
+      ],
+      "cpi_shock": [
+        1,
+        1,
+        1.0
+      ],
+      "fed_emergency_cut": [
+        1,
+        1,
+        1.0
+      ],
+      "fed_first_hike": [
+        0,
+        1,
+        0.0
+      ],
+      "fed_hawkish_hold": [
+        0,
+        1,
+        0.0
+      ],
+      "fed_pivot_signal": [
+        0,
+        1,
+        0.0
+      ],
+      "fed_unlimited_qe": [
+        1,
+        1,
+        1.0
+      ],
+      "gbp_flash_crash": [
+        0,
+        1,
+        0.0
+      ],
+      "gme_market_contagion": [
+        0,
+        1,
+        0.0
+      ],
+      "iran_israel_tension": [
+        0,
+        1,
+        0.0
+      ],
+      "jan_selloff_2022": [
+        0,
+        1,
+        0.0
+      ],
+      "jun_cpi_shock": [
+        1,
+        1,
+        1.0
+      ],
+      "oct_cpi_relief_then": [
+        0,
+        1,
+        0.0
+      ],
+      "opec_surprise_cut": [
+        0,
+        1,
+        0.0
+      ],
+      "pfizer_vaccine_news": [
+        0,
+        1,
+        0.0
+      ],
+      "russia_invades_ukraine": [
+        0,
+        1,
+        0.0
+      ],
+      "signature_bank": [
+        1,
+        1,
+        1.0
+      ],
+      "svb_failure": [
+        1,
+        1,
+        1.0
+      ],
+      "volmageddon": [
+        0,
+        1,
+        0.0
+      ],
+      "yen_carry_unwind": [
+        0,
+        1,
+        0.0
+      ]
+    },
+    "per_kind_attributed_positive": {
+      "dependence_shift": 23
+    },
+    "per_kind_in_quiet": {},
+    "per_kind_total": {
+      "dependence_shift": 48
+    },
+    "positive_events_detected": 7,
+    "positive_events_outside_alert_coverage": [
+      "volmageddon",
+      "opec_surprise_cut",
+      "fed_hawkish_hold",
+      "fed_pivot_signal",
+      "iran_israel_tension",
+      "yen_carry_unwind"
+    ],
+    "positive_events_total": 20,
+    "quiet_total_days": 63.0,
+    "quiet_violation_rate": 0.0,
+    "quiet_windows_total": 9,
+    "quiet_windows_violated": 0,
+    "timestamp_resolution_ns": 28800000000000,
+    "ttd_per_event_ns": [
+      0,
+      0,
+      0,
+      0,
+      259200000000000,
+      0,
+      0
+    ],
+    "unattributed": 25
+  },
+  "schema": "qpulse.evaluate/1"
+}

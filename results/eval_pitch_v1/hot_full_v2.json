@@ -1,0 +1,275 @@
+{
+  "generated_at": "2026-07-26T23:57:23+00:00",
+  "inputs": {
+    "alerts_path": "gate/frozen/btc_alerts_v2.csv",
+    "alerts_sha256": "c62573fc11180786fb8f4d7c6ec92f85b9822c8db828061f277a1b51b8e7028c",
+    "events_path": "events/crypto_canonical.csv",
+    "events_sha256": "f8766b8488bf14cca97dfec749a2c08508ebb1912352defd014cd424f7178ec7",
+    "kinds_filter": null,
+    "tolerance_sec": 86400.0
+  },
+  "missed_events": [
+    {
+      "description": "2021-05-24 China intensifies bitcoin mining crackdown",
+      "event_type": "china_mining_ban",
+      "symbol": "BTC-USD",
+      "ts_ns": 1621814400000000000
+    },
+    {
+      "description": "2021-11-26 ATH followed by multi-day drawdown",
+      "event_type": "taproot_ath_aftermath",
+      "symbol": "BTC-USD",
+      "ts_ns": 1637884800000000000
+    },
+    {
+      "description": "2022-06-08 Celsius suspends withdrawals",
+      "event_type": "celsius_halt",
+      "symbol": "BTC-USD",
+      "ts_ns": 1654646400000000000
+    },
+    {
+      "description": "2022-11-11 FTX files Chapter 11",
+      "event_type": "ftx_bankruptcy",
+      "symbol": "BTC-USD",
+      "ts_ns": 1668124800000000000
+    },
+    {
+      "description": "2023-03-11 USDC briefly depegs after SVB exposure",
+      "event_type": "usdc_depeg",
+      "symbol": "BTC-USD",
+      "ts_ns": 1678492800000000000
+    },
+    {
+      "description": "2024-01-11 SEC approves spot Bitcoin ETFs",
+      "event_type": "bitcoin_etf_approval",
+      "symbol": "BTC-USD",
+      "ts_ns": 1705017600000000000
+    },
+    {
+      "description": "2019-01-16 BTC drawdown post-2018 collapse",
+      "event_type": "btc_2019_capitulation",
+      "symbol": "BTC-USD",
+      "ts_ns": 1547596800000000000
+    },
+    {
+      "description": "2019-11-08 BTC China rally then fade",
+      "event_type": "btc_china_pump",
+      "symbol": "BTC-USD",
+      "ts_ns": 1573171200000000000
+    },
+    {
+      "description": "2020-03-12 BTC -50% in COVID flash",
+      "event_type": "btc_covid_crash",
+      "symbol": "BTC-USD",
+      "ts_ns": 1583798400000000000
+    },
+    {
+      "description": "2020-11-20 BTC re-takes 18k",
+      "event_type": "btc_first_18k",
+      "symbol": "BTC-USD",
+      "ts_ns": 1605830400000000000
+    },
+    {
+      "description": "2021-04-14 Coinbase IPO BTC ATH",
+      "event_type": "coinbase_ipo",
+      "symbol": "BTC-USD",
+      "ts_ns": 1618358400000000000
+    },
+    {
+      "description": "2021-05-13 Musk BTC payment reversal",
+      "event_type": "musk_btc_reversal",
+      "symbol": "BTC-USD",
+      "ts_ns": 1620864000000000000
+    },
+    {
+      "description": "2021-05-24 China crackdown intensifies",
+      "event_type": "china_mining_ban_strong",
+      "symbol": "BTC-USD",
+      "ts_ns": 1621814400000000000
+    },
+    {
+      "description": "2022-08-09 Tornado Cash US sanctions",
+      "event_type": "tornado_cash_sanctions",
+      "symbol": "BTC-USD",
+      "ts_ns": 1660003200000000000
+    },
+    {
+      "description": "2023-05-26 Binance/CZ DOJ disclosures",
+      "event_type": "binance_cz_charges",
+      "symbol": "BTC-USD",
+      "ts_ns": 1685059200000000000
+    },
+    {
+      "description": "2023-11-22 Binance $4.3B DOJ settlement",
+      "event_type": "binance_cz_settlement",
+      "symbol": "BTC-USD",
+      "ts_ns": 1700611200000000000
+    },
+    {
+      "description": "2025-01-20 BTC ATH near inauguration",
+      "event_type": "trump_inauguration_pump",
+      "symbol": "BTC-USD",
+      "ts_ns": 1737244800000000000
+    }
+  ],
+  "results": {
+    "alerts_coverage_ts_ns": [
+      1546732800000000000,
+      1678752000000000000
+    ],
+    "alerts_in_quiet": 2,
+    "alerts_total": 42,
+    "detection_rate": 0.19047619047619047,
+    "detection_rate_ci95": [
+      0.07667440615177301,
+      0.40000986539273287
+    ],
+    "fp_per_day_ci95": [
+      0.0038445917229200806,
+      0.1146775820273644
+    ],
+    "fp_per_day_in_quiet": 0.031746031746031744,
+    "mean_ttd_ms": 0.0,
+    "median_ttd_ms": 0.0,
+    "per_event_type": {
+      "binance_cz_charges": [
+        0,
+        1,
+        0.0
+      ],
+      "binance_cz_settlement": [
+        0,
+        1,
+        0.0
+      ],
+      "bitcoin_etf_approval": [
+        0,
+        1,
+        0.0
+      ],
+      "btc_2019_capitulation": [
+        0,
+        1,
+        0.0
+      ],
+      "btc_china_pump": [
+        0,
+        1,
+        0.0
+      ],
+      "btc_covid_crash": [
+        0,
+        1,
+        0.0
+      ],
+      "btc_first_18k": [
+        0,
+        1,
+        0.0
+      ],
+      "celsius_halt": [
+        0,
+        1,
+        0.0
+      ],
+      "china_mining_ban": [
+        0,
+        1,
+        0.0
+      ],
+      "china_mining_ban_strong": [
+        0,
+        1,
+        0.0
+      ],
+      "coinbase_ipo": [
+        0,
+        1,
+        0.0
+      ],
+      "ftx_bank_run": [
+        1,
+        1,
+        1.0
+      ],
+      "ftx_bankruptcy": [
+        0,
+        1,
+        0.0
+      ],
+      "luna_death_spiral": [
+        1,
+        1,
+        1.0
+      ],
+      "musk_btc_reversal": [
+        0,
+        1,
+        0.0
+      ],
+      "svb_contagion": [
+        1,
+        1,
+        1.0
+      ],
+      "taproot_ath_aftermath": [
+        0,
+        1,
+        0.0
+      ],
+      "tornado_cash_sanctions": [
+        0,
+        1,
+        0.0
+      ],
+      "trump_inauguration_pump": [
+        0,
+        1,
+        0.0
+      ],
+      "usdc_depeg": [
+        0,
+        1,
+        0.0
+      ],
+      "ust_depeg_begins": [
+        1,
+        1,
+        1.0
+      ]
+    },
+    "per_kind_attributed_positive": {
+      "cusum": 3,
+      "robust_z": 2
+    },
+    "per_kind_in_quiet": {
+      "cusum": 1,
+      "robust_z": 1
+    },
+    "per_kind_total": {
+      "cusum": 20,
+      "robust_z": 22
+    },
+    "positive_events_detected": 4,
+    "positive_events_outside_alert_coverage": [
+      "bitcoin_etf_approval",
+      "binance_cz_charges",
+      "binance_cz_settlement",
+      "trump_inauguration_pump"
+    ],
+    "positive_events_total": 21,
+    "quiet_total_days": 63.0,
+    "quiet_violation_rate": 0.1111111111111111,
+    "quiet_windows_total": 9,
+    "quiet_windows_violated": 1,
+    "timestamp_resolution_ns": 86400000000000,
+    "ttd_per_event_ns": [
+      0,
+      -86400000000000,
+      0,
+      86400000000000
+    ],
+    "unattributed": 35
+  },
+  "schema": "qpulse.evaluate/1"
+}

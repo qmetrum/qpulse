@@ -152,14 +152,33 @@ We considered MPS-copula (matrix product state, "quantum-inspired"). Pre-registe
 
 10 canonical crypto crisis events + 6 explicitly-quiet 7-day windows.
 
-| Metric | Value |
-|---|---|
-| **Recall** | **60%** (6/10) |
-| Median time-to-detect | **0 ms** |
-| False positive rate | **0.05/day** in quiet markets |
+Scored on the full 21-event committed catalog with 63 quiet days; the 10-event
+pitch-era subset earlier versions quoted is shown for comparison.
 
-**Caught**: Terra/Luna (2022-05-09/10), FTX bank run + Chapter 11, USDC depeg, SVB contagion.
-**Missed**: events outside data window, gradual moves (Celsius mid-decline, China ban early in calibration).
+| Metric | v1 (published artifact) | v2 (reproducible generation) |
+|---|---|---|
+| **Recall, full catalog** | **38%** (8/21), 95% CI 21–59% | **19%** (4/21), 95% CI 8–40% |
+| Recall, pitch subset | 60% (6/10), CI 31–83% | 40% (4/10), CI 17–69% |
+| **False positive rate, full** | **0.06/day** (4 alerts / 63 quiet days), CI 0.02–0.16 | **0.03/day** (2 alerts / 63 quiet days), CI 0.00–0.11 |
+| Time-to-detect | *withdrawn — see below* | *withdrawn — see below* |
+
+**v1 caught**: Terra/Luna (2022-05-09/10), FTX bank run + Chapter 11, USDC depeg, SVB contagion.
+**v1 missed**: events outside the data window, gradual moves (Celsius mid-decline, China ban early in calibration). 4 of the 21 events post-date the alert artifact entirely and could not have been caught by any configuration; they are counted as misses anyway.
+
+**On time-to-detect:** earlier versions of this deck reported "median 0 ms". That
+figure was a units artifact — this evaluation runs on *daily bars*, so the only
+values it can produce are whole days, and "0" meant "the same bar", not
+sub-millisecond detection. Two of v1's six detections in fact fire a day *before*
+the labeled timestamp. The claim is withdrawn; the sub-millisecond numbers
+elsewhere in this deck describe processing latency, a different quantity that
+these catalogs do not evidence.
+
+Both rows are reproducible via `bash gate/validate.sh`, but only v2's *alerts* can be
+regenerated: the v1 artifact's backtest command was never recorded and a parameter
+search failed to recover it, so v2 pins a command chosen by a rule fixed before its
+output was seen (`gate/frozen/V2_BASELINE.md`). The recall intervals overlap heavily —
+this is not evidence that one configuration detects better than the other, and
+neither should be quoted without its interval.
 
 ---
 
@@ -167,10 +186,15 @@ We considered MPS-copula (matrix product state, "quantum-inspired"). Pre-registe
 
 8-asset core: 4 sectors + SPY + TLT + GLD + HYG. 9 macro events + 5 quiet windows.
 
-| Metric | Value |
-|---|---|
-| **Recall** | **67%** (6/9) |
-| False positive rate | **0.00/day** in quiet markets |
+| Metric | Full catalog (20 events) | Pitch subset (9 events) |
+|---|---|---|
+| **Recall** | **35%** (7/20), 95% CI 18–57% | 67% (6/9), CI 35–88% |
+| False positive rate | **0.00/day** (0 alerts / 63 quiet days), CI 0.00–0.06 | 0.00/day (0 / 35 days), CI 0.00–0.11 |
+
+Reproducible via `bash gate/validate.sh` → `results/eval_pitch_v1/batch_full_v1.json`
+and `batch_pitch_v1.json`. Zero observed false positives over 63 quiet days supports
+an upper bound near 0.06/day, not a claim of zero. 6 of the 20 events post-date the
+alert artifact and could not have been detected; they are counted as misses anyway.
 
 **Caught**: COVID Black Monday, Fed emergency cut, Fed unlimited QE, CPI shock 2022, SVB failure, Signature Bank.
 
@@ -180,11 +204,15 @@ We considered MPS-copula (matrix product state, "quantum-inspired"). Pre-registe
 
 ## Performance
 
+⚠️ **These have no committed artifact**, unlike every detection number in this deck.
+They come from a run whose output was never saved, and `gate/validate.sh` does not
+reproduce them. Re-measure with `python -m app.bench` before quoting.
+
 | Benchmark | Value |
 |---|---|
 | End-to-end p99 latency (real Alpaca WS) | < 500 µs |
 | Throughput (single core, synthetic) | 280k ticks/sec |
-| Memory per per-symbol detector | O(1) streaming |
+| Memory per per-symbol detector | O(1) streaming (structural — see `app/features.py`) |
 | Backtest throughput | 130–250k ticks/sec |
 
 Pure Python (numpy, scipy, fastapi, uvloop, websockets, pandas, yfinance). No proprietary deps. No quantum SDK. Single-process FastAPI + asyncio. Runs on a laptop or a t3.medium.
@@ -225,7 +253,7 @@ All running today. Validation numbers are reproducible from the repo.
 
 1. **Streaming math, not ML.** No model retraining, no GPUs, no drift. Works from cold start, adapts via EWMA/P², stays calibrated.
 2. **Honest validation.** Pre-registered criteria, negative controls, public decision trail. Not "we ran it on a few days that looked good."
-3. **Sub-millisecond hot path.** Real measurement, not aspirational. Headroom for richer feature engineering before latency becomes a constraint.
+3. **Sub-millisecond hot path.** Measured, but on a run whose output was not preserved — re-measurable in one command (`python -m app.bench`), and flagged as unbacked in the Performance section until it is. Headroom for richer feature engineering before latency becomes a constraint.
 4. **Two complementary tiers.** They don't compete — they cover different failure modes (asset shock vs. systemic correlation break).
 5. **Operationally clean.** Persistence, auth, health, webhooks, replay, backtest, evaluator — all already there, no future work to "make it productionizable."
 

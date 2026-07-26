@@ -1,0 +1,15 @@
+ts_ns,symbol,event_type,description,polarity,duration_sec
+1583712000000000000,SPY,covid_black_monday,2020-03-09 S&P -7.6% oil crash + COVID circuit breakers,positive,0
+1584316800000000000,SPY,fed_emergency_cut,2020-03-16 S&P -12% Fed emergency rate cut,positive,0
+1584921600000000000,SPY,fed_unlimited_qe,2020-03-23 Fed announces unlimited QE market bottom,positive,0
+1645660800000000000,SPY,russia_invades_ukraine,2022-02-24 Russia invades Ukraine flight to safety,positive,0
+1647388800000000000,SPY,fed_first_hike,2022-03-16 Fed first 25bp hike of cycle bond-equity decorrelation,positive,0
+1663027200000000000,SPY,cpi_shock,2022-09-13 August CPI 8.3% hot print S&P -4.3%,positive,0
+1664150400000000000,SPY,gbp_flash_crash,2022-09-26 UK LDI crisis GBP flash crash global rates spike,positive,0
+1678406400000000000,SPY,svb_failure,2023-03-10 SVB closed by FDIC banking contagion starts,positive,0
+1678665600000000000,SPY,signature_bank,2023-03-13 Signature Bank collapse Fed BTFP,positive,0
+1557705600000000000,SPY,quiet_2019_may,2019-05-13 to 05-20 pre-trade-war-escalation calm,quiet,604800
+1593993600000000000,SPY,quiet_2020_jul,2020-07-06 to 07-13 post-COVID recovery steady,quiet,604800
+1618790400000000000,SPY,quiet_2021_apr,2021-04-19 to 04-26 Q1 earnings calm,quiet,604800
+1658102400000000000,SPY,quiet_2022_jul,2022-07-18 to 07-25 pre-Jackson Hole mid-summer,quiet,604800
+1673827200000000000,SPY,quiet_2023_jan,2023-01-16 to 01-23 pre-Feb post-holiday,quiet,604800

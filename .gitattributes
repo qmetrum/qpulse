@@ -1,0 +1,11 @@
+# Normalise line endings so a clone on Windows (core.autocrlf=true) still runs
+# the validation gate.
+* text=auto eol=lf
+
+# Frozen validation evidence is checksummed in SHA256SUMS and byte-compared by
+# gate/validate.sh. Git must never rewrite a single byte of it, on any platform.
+gate/frozen/** -text
+events/frozen/** -text
+
+# Shell scripts must keep LF or the shebang breaks.
+*.sh text eol=lf

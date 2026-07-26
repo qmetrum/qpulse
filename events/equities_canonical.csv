@@ -20,8 +20,8 @@ ts_ns,symbol,event_type,description,polarity,duration_sec
 1638835200000000000,RIVN,rivian_post_ipo,2021-12-07 Rivian peak then crash,positive,0
 1604880000000000000,PFE,pfizer_vaccine_news,2020-11-09 PFE +15% vaccine effective,positive,0
 1583712000000000000,AAPL,covid_aapl_drawdown,2020-03-09 AAPL major drawdown begins,positive,0
-1564963200000000000,quiet_2019_aug,SPY,quiet_pre_repo,2019-08-05 to 08-12 calm pre-repo crisis,quiet,604800
-1605139200000000000,quiet_2020_nov_postvax,SPY,quiet_post_election,2020-11-12 to 11-19 calm post-election post-vaccine,quiet,604800
-1631318400000000000,quiet_2021_sep_a,SPY,quiet_2021_sep,2021-09-11 to 09-18 fall consolidation,quiet,604800
-1659916800000000000,quiet_2022_aug,SPY,quiet_post_luna_pre_jh,2022-08-08 to 08-15 between Luna and Jackson Hole,quiet,604800
-1697760000000000000,quiet_2023_oct,SPY,quiet_pre_pivot,2023-10-20 to 10-27 pre-Fed pivot,quiet,604800
+1564963200000000000,SPY,quiet_pre_repo,2019-08-05 to 08-12 calm pre-repo crisis,quiet,604800
+1605139200000000000,SPY,quiet_post_election,2020-11-12 to 11-19 calm post-election post-vaccine,quiet,604800
+1631318400000000000,SPY,quiet_2021_sep,2021-09-11 to 09-18 fall consolidation,quiet,604800
+1659916800000000000,SPY,quiet_post_luna_pre_jh,2022-08-08 to 08-15 between Luna and Jackson Hole,quiet,604800
+1697760000000000000,SPY,quiet_pre_pivot,2023-10-20 to 10-27 pre-Fed pivot,quiet,604800
