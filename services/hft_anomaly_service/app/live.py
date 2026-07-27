@@ -174,6 +174,7 @@ def main() -> None:
     db_path = os.environ.get("HFT_DB_PATH", "qpulse.db")
     webhook_url = os.environ.get("HFT_WEBHOOK_URL")
     webhook_min_score = float(os.environ.get("HFT_WEBHOOK_MIN_SCORE", "0"))
+    webhook_key = os.environ.get("HFT_WEBHOOK_KEY")
 
     app = make_app(router, state, recent, alert_bus, rolling, db_path=db_path)
 
@@ -206,9 +207,24 @@ def main() -> None:
         print(f"[sqlite] persisting alerts → {db_path}")
 
         if webhook_url:
-            app.state.webhook_sink = WebhookSink(webhook_url, alert_bus, min_score=webhook_min_score)
+            # feed_name tells the receiver which data context produced these
+            # alerts, so it never labels them with a gate measured elsewhere.
+            # For live feeds it is read per batch, because /config/feed can
+            # switch crypto↔iex while the service runs.
+            if args.source == "csv":
+                feed_name = "csv"
+            elif args.source == "synthetic":
+                feed_name = "synthetic"
+            else:
+                feed_name = lambda: state.feed_name  # noqa: E731
+            app.state.webhook_sink = WebhookSink(
+                webhook_url, alert_bus, min_score=webhook_min_score,
+                api_key=webhook_key, feed_name=feed_name,
+            )
             app.state.webhook_task = asyncio.create_task(app.state.webhook_sink.run())
-            print(f"[webhook] forwarding alerts → {webhook_url}  (min_score={webhook_min_score})")
+            auth_note = "authenticated" if webhook_key else "NO KEY SET"
+            print(f"[webhook] forwarding alerts → {webhook_url}  (min_score="
+                  f"{webhook_min_score}, feed={app.state.webhook_sink.feed_name}, {auth_note})")
 
         if os.environ.get("HFT_BATCH_ENABLED", "false").lower() in ("1", "true", "yes"):
             univ_env = os.environ.get("HFT_BATCH_UNIVERSE", "")

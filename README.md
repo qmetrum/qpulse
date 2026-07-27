@@ -144,6 +144,12 @@ roughly 47% (8/17) hot v1 and 50% (7/14) batch.
 - `bitcoin_etf_approval` (2024-01-11) post-dates the last alert in both artifacts (2023-03-13), so no configuration could detect it. It is still counted as a miss in the denominator rather than dropped.
 - Growing the catalogs to tighten these intervals is roadmap phases P3–P6 (`docs/ROADMAP.md`).
 
+## Qsight integration
+
+Qpulse alerts can be pushed into the [Qsight](https://qsight.qmetrum.io) dashboard
+over an authenticated webhook, with Qpulse running on demand rather than as a
+service. Setup and behaviour: **[`docs/QSIGHT_INTEGRATION.md`](docs/QSIGHT_INTEGRATION.md)**.
+
 ## Deployment
 
 For running Qpulse on a VPS (single EC2 instance, systemd unit, Caddy reverse proxy with automatic Let's Encrypt HTTPS, `sync.sh` code pushes), see **[`deploy/README.md`](deploy/README.md)**.
