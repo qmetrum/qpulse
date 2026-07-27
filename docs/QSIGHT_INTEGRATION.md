@@ -98,6 +98,39 @@ symbol, so changing `HFT_BATCH_UNIVERSE` correctly drops the claim.
 Alerts from the `synthetic` or `csv` feeds are badged as such in the UI so they
 cannot be mistaken for live-market alerts.
 
+## Self-configuring watchlist
+
+Qpulse can take its symbol list from Qsight instead of `HFT_SYMBOLS`, so adding
+a ticker is something a user does in the UI rather than something an operator
+does over SSH. Add to the environment:
+
+```
+HFT_WATCHLIST_URL=https://qsight-api.qmetrum.io/qpulse/watchlist
+HFT_WATCHLIST_KEY=<same shared secret as HFT_WEBHOOK_KEY>   # optional; falls back to it
+HFT_WATCHLIST_POLL_SEC=300
+```
+
+On each poll Qpulse asks for the symbols matching its **current feed** and
+reconciles its live subscription — no restart. `GET /qpulse/watchlist?feed=…`
+returns exactly the tickers with an active anomaly rule carrying
+`extra_config.detector = "qpulse"`: the same set `/qpulse/ingest` will write to,
+so the subscription can never drift from what is actually actionable.
+
+Symbol formats are translated per feed (`BTC-USD` → `BTC/USD` for crypto, plain
+tickers for `iex`/`sip`), using `Asset.asset_class` and falling back to the
+symbol's shape when an asset was never classified.
+
+Failure behaviour is deliberately conservative:
+
+- An upstream that is down, slow, or erroring leaves the current subscription
+  untouched and logs; the detector keeps watching what it was already watching.
+- An **empty** list is treated as "no change", not "unsubscribe everything" — an
+  upstream bug should not silently blind the detector. Set
+  `HFT_WATCHLIST_ALLOW_EMPTY=true` if you genuinely want an empty list honoured.
+- The list is capped (`QPULSE_WATCHLIST_MAX`, default 200) because Alpaca limits
+  subscriptions; truncation is reported in the response and logged at both ends
+  rather than silently dropping symbols.
+
 ## Email and explanations
 
 Ingested alerts also reach the user outside the dashboard:

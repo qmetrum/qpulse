@@ -34,6 +34,7 @@ from .recorder import CsvTickRecorder, record_tap
 from .replay import csv_replay_feed
 from .sinks.sqlite_sink import SqliteSink
 from .sinks.webhook_sink import WebhookSink
+from .watchlist import build_from_env as build_watchlist_sync
 from .state import RuntimeState
 from .stats import RollingStats
 
@@ -229,6 +230,15 @@ def main() -> None:
             state.symbols = controller.symbols
             state.feed_name = controller.feed_name
             feed = controller.stream()
+
+            # Optional: let an upstream service own the symbol list, so adding a
+            # holding there is enough — no env var edit, no restart.
+            sync = build_watchlist_sync(controller, state)
+            if sync:
+                app.state.watchlist_sync = sync
+                app.state.watchlist_task = asyncio.create_task(sync.run())
+                print(f"[watchlist] syncing symbols from {sync.url} "
+                      f"every {sync.poll_sec:.0f}s")
         else:
             feed = synthetic_feed(symbols, ticks_per_second=args.tps, anomaly_rate=args.anomaly_rate)
         if args.record_to:
@@ -282,11 +292,12 @@ def main() -> None:
 
     @app.on_event("shutdown")
     async def _stop_detector() -> None:
-        for attr in ("detector_task", "sqlite_task", "webhook_task", "batch_task"):
+        for attr in ("detector_task", "sqlite_task", "webhook_task", "batch_task",
+                     "watchlist_task"):
             task = getattr(app.state, attr, None)
             if task:
                 task.cancel()
-        for attr in ("sqlite_sink", "webhook_sink", "batch_detector"):
+        for attr in ("sqlite_sink", "webhook_sink", "batch_detector", "watchlist_sync"):
             sink = getattr(app.state, attr, None)
             if sink:
                 sink.close()
