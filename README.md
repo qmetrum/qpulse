@@ -144,6 +144,43 @@ roughly 47% (8/17) hot v1 and 50% (7/14) batch.
 - `bitcoin_etf_approval` (2024-01-11) post-dates the last alert in both artifacts (2023-03-13), so no configuration could detect it. It is still counted as a miss in the denominator rather than dropped.
 - Growing the catalogs to tighten these intervals is roadmap phases P3–P6 (`docs/ROADMAP.md`).
 
+## Running standalone
+
+Qpulse is self-contained. It has **no code-level dependency on any other
+service** — a test in `services/hft_anomaly_service/tests/test_standalone.py`
+enforces that — and every integration below is opt-in via environment variable.
+A deployment that never talks to Qsight still gets:
+
+- **The detectors and the live alert tape** at `http://localhost:8080/`, with
+  in-browser controls to add/remove symbols, switch feed, tune thresholds, and
+  pause/resume — no config file editing.
+- **Alert history** in SQLite (`HFT_DB_PATH`), queryable via `/alerts/history`.
+- **Email notifications** over plain SMTP, so alerts reach a person without a
+  browser open (see below).
+- **A generic webhook** (`HFT_WEBHOOK_URL`) for Slack, an email gateway, or any
+  endpoint of your own.
+
+### Email alerts (SMTP)
+
+Plain SMTP rather than a specific cloud provider, so it works with SES,
+Postmark, Mailgun, Fastmail, or a corporate relay:
+
+```bash
+HFT_EMAIL_TO=ops@example.com,risk@example.com \
+HFT_SMTP_HOST=smtp.example.com HFT_SMTP_USER=… HFT_SMTP_PASSWORD=… \
+HFT_EMAIL_MIN_SCORE=6 \
+  python -m app.live --source alpaca
+```
+
+Two throttles, because an unthrottled detector emails itself into a spam folder
+within a day: a **digest window** (`HFT_EMAIL_DIGEST_SEC`, default 60 s) batches
+everything recent into one message, and a **per-symbol cooldown**
+(`HFT_EMAIL_COOLDOWN_SEC`, default 900 s) stops one instrument repeating.
+Delivery is best-effort — an SMTP outage logs and never interrupts detection.
+
+Emails state the feed they came from and carry no accuracy claim, so a synthetic
+or replayed alert can't be mistaken for a validated live-market signal.
+
 ## Qsight integration
 
 Qpulse alerts can be pushed into the [Qsight](https://qsight.qmetrum.io) dashboard

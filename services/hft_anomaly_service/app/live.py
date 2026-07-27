@@ -33,6 +33,7 @@ from .recent import RecentAlerts
 from .recorder import CsvTickRecorder, record_tap
 from .replay import csv_replay_feed
 from .sinks.sqlite_sink import SqliteSink
+from .sinks.email_sink import build_from_env as build_email_sink
 from .sinks.webhook_sink import WebhookSink
 from .watchlist import build_from_env as build_watchlist_sync
 from .state import RuntimeState
@@ -249,17 +250,29 @@ def main() -> None:
         app.state.sqlite_task = asyncio.create_task(app.state.sqlite_sink.run())
         print(f"[sqlite] persisting alerts → {db_path}")
 
+        # feed_name tells any sink which data context produced these alerts, so
+        # none of them labels a simulated or replayed alert as live-market. For
+        # live feeds it is read per batch, because /config/feed can switch
+        # crypto↔iex while the service runs.
+        if args.source == "csv":
+            feed_name = "csv"
+        elif args.source == "synthetic":
+            feed_name = "synthetic"
+        else:
+            feed_name = lambda: state.feed_name  # noqa: E731
+
+        # Standalone notification path: reaches a human without any other
+        # service in the picture.
+        email_sink = build_email_sink(alert_bus, feed_name=feed_name)
+        if email_sink:
+            app.state.email_sink = email_sink
+            app.state.email_task = asyncio.create_task(email_sink.run())
+            print(f"[email] alerting {len(email_sink.cfg['recipients'])} recipient(s) "
+                  f"via {email_sink.cfg['host']} "
+                  f"(min_score={email_sink.min_score}, digest={email_sink.digest_sec:.0f}s, "
+                  f"cooldown={email_sink.cooldown_sec:.0f}s)")
+
         if webhook_url:
-            # feed_name tells the receiver which data context produced these
-            # alerts, so it never labels them with a gate measured elsewhere.
-            # For live feeds it is read per batch, because /config/feed can
-            # switch crypto↔iex while the service runs.
-            if args.source == "csv":
-                feed_name = "csv"
-            elif args.source == "synthetic":
-                feed_name = "synthetic"
-            else:
-                feed_name = lambda: state.feed_name  # noqa: E731
             app.state.webhook_sink = WebhookSink(
                 webhook_url, alert_bus, min_score=webhook_min_score,
                 api_key=webhook_key, feed_name=feed_name,
@@ -293,11 +306,12 @@ def main() -> None:
     @app.on_event("shutdown")
     async def _stop_detector() -> None:
         for attr in ("detector_task", "sqlite_task", "webhook_task", "batch_task",
-                     "watchlist_task"):
+                     "watchlist_task", "email_task"):
             task = getattr(app.state, attr, None)
             if task:
                 task.cancel()
-        for attr in ("sqlite_sink", "webhook_sink", "batch_detector", "watchlist_sync"):
+        for attr in ("sqlite_sink", "webhook_sink", "batch_detector", "watchlist_sync",
+                     "email_sink"):
             sink = getattr(app.state, attr, None)
             if sink:
                 sink.close()
