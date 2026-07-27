@@ -98,4 +98,18 @@ symbol, so changing `HFT_BATCH_UNIVERSE` correctly drops the claim.
 Alerts from the `synthetic` or `csv` feeds are badged as such in the UI so they
 cannot be mistaken for live-market alerts.
 
+## Email and explanations
+
+Ingested alerts also reach the user outside the dashboard:
+
+- **Email** — sent to the rule owner for every alert that persists (so the
+  per-rule cooldown throttles delivery). Off until SES is configured on the
+  Qsight side; see `services/forecasting_service_py/docs/alert-email-setup.md`
+  in the Qsight repo. The body always states the gating status and the feed.
+- **Explanation** — Qsight's `alert_explainer` agent understands the Qpulse
+  payload and combines it with the user's actual portfolio weights, so an alert
+  becomes "NVDA moved 7σ, and it is 12% of this portfolio" rather than a bare
+  score. It is told never to imply an accuracy or track record, and to say so
+  when a detector is ungated or the feed is not live.
+
 Measuring live-stream performance is roadmap phase P5.

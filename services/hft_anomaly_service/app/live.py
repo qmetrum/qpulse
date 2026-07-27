@@ -90,10 +90,37 @@ def _parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
+def _check_feed_symbol_match(feed_name: str, symbols: list) -> None:
+    """Fail fast when the symbol format does not match the feed.
+
+    Alpaca answers a mismatched subscription with `{'code': 400, 'msg':
+    'invalid syntax'}`, which says nothing about which symbol or why. Catch it
+    here, where the offending values are still in hand."""
+    is_crypto = str(feed_name).lower() == "crypto"
+    wrong = [s for s in symbols if ("/" in s) != is_crypto]
+    if not wrong:
+        return
+    want = "slash pairs like BTC/USD" if is_crypto else "plain tickers like AAPL"
+    other = "iex" if is_crypto else "crypto"
+    raise SystemExit(
+        f"\n[config] feed '{feed_name}' expects {want}, but got: {', '.join(wrong)}\n"
+        f"[config] either fix the symbol list, or set ALPACA_FEED={other}.\n"
+        f"[config] NB a persisted config file outranks env vars — check the\n"
+        f"[config] '[config] ... overrode' lines above, and HFT_CONFIG_PATH\n"
+        f"[config] (currently {os.environ.get('HFT_CONFIG_PATH', 'qpulse_config.json')}).\n"
+    )
+
+
 def _state_from_env() -> RuntimeState:
     """RuntimeState seeded from HFT_* env vars; unset keys fall back to class defaults."""
     defaults = RuntimeState()
     return RuntimeState(
+        # Seeded here so the feed follows the same precedence chain as symbols
+        # (env < config file). Reading ALPACA_FEED directly at the call site
+        # instead let a persisted symbol list pair with an env-supplied feed —
+        # e.g. crypto pairs subscribed on iex, which the vendor rejects with an
+        # unexplained 400.
+        feed_name=os.environ.get("ALPACA_FEED", defaults.feed_name),
         default_z_thresh=float(os.environ.get("HFT_Z_THRESH", defaults.default_z_thresh)),
         default_cusum_h=float(os.environ.get("HFT_CUSUM_H", defaults.default_cusum_h)),
         default_cusum_k=float(os.environ.get("HFT_CUSUM_K", defaults.default_cusum_k)),
@@ -129,10 +156,16 @@ def main() -> None:
     symbols = [s.strip() for s in args.symbols.split(",") if s.strip()]
 
     state = _state_from_env()
-    # Overlay persisted config file if it exists (precedence: env < file < API)
-    loaded = load_config_file(state)
-    if loaded:
-        print("[config] loaded persisted overrides from qpulse_config.json")
+    # Overlay persisted config file if it exists (precedence: env < file < API).
+    # load_config_file prints each field it changed; naming the real path here
+    # matters because it is configurable and the default is often not the one
+    # in use.
+    load_config_file(state)
+
+    # Validate before the server starts. Raising inside the async startup hook
+    # instead would bury the message under a Starlette traceback.
+    if args.source == "alpaca":
+        _check_feed_symbol_match(state.feed_name, state.symbols or symbols)
 
     def _factory(sym: str) -> PerSymbolDetector:
         return PerSymbolDetector(
@@ -188,7 +221,7 @@ def main() -> None:
             initial_symbols = state.symbols if state.symbols else symbols
             controller = AlpacaFeedController(
                 initial_symbols=initial_symbols,
-                feed_name=os.environ.get("ALPACA_FEED", "iex"),
+                feed_name=state.feed_name,
                 trades=True,
                 quotes=os.environ.get("HFT_QUOTES", "true").lower() != "false",
             )

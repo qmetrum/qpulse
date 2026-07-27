@@ -201,6 +201,31 @@ Equities depth stays **out of scope** (no free source; paid feeds violate cost p
 
 **Explicitly parked**: P² migration of Vol/Micro/OBI stats; z-based OBI; Hawkes burst upgrade; tick-granularity catalog events (Alpaca history is IEX-only for equities — any TTD claim must say "on IEX tick data" — and crypto history effectively starts ~2021); TopBar bell, per-ticker markers, `/anomalies` page; symbol-level `QpulseAlert` table; always-on architecture B (re-entry: a paying/live consumer; then it is a `HFT_WEBHOOK_URL` config flip).
 
+## Parked — per-product entitlements
+
+Noted 2026-07-27, deliberately **not** built: there is no way to sell the products
+separately. `User` has no plan/tier/product field and there are no feature flags,
+so every authenticated user of a deployment sees every feature.
+
+What is and isn't separable as things stand:
+
+- **Qpulse alone — already works.** Separate repo, own FastAPI UI on `:8080`, own
+  persistence, own VPS deploy path (`deploy/README.md`). No Qsight required. The
+  caveat is that the polished alert rendering lives in Qsight's frontend, so a
+  Qpulse-only client gets the operator-grade tape.
+- **Qsight alone — works, with one wart.** P1 mounted `AnomalyFeedCard` on the
+  dashboard unconditionally, so a forecasting-only client would see a card for a
+  product they did not buy, sitting in its empty state. Harmless while the only
+  user is the founder; fix before any third-party Qsight-only deployment.
+- **Qlens — does not exist.** A name in this roadmap and the pitch docs, no code
+  in either repo. Not sellable in any packaging.
+
+Re-entry criterion: a real second client, or a deal for one product only. The
+cheap version is a `products` JSON column on `User` plus gating in the dashboard
+and the relevant endpoints (~1 session); per-client deployments would isolate
+better but multiply AWS cost and ops, which conflicts with the scale-to-zero
+posture that drove the P1 architecture choice.
+
 ## Appendix — MAJOR critique findings fixed in this synthesis
 
 1. Broken data→alerts chain / unreproducible `btc_alerts.csv` → P0 task 6 (documented gap + newly pinned v2 command; P2 gate restated as determinism regression).

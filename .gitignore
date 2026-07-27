@@ -7,8 +7,9 @@
 *.db
 *.db-wal
 *.db-shm
-qpulse_config.json
-qpulse_live.json
+# Runtime config written by the service. Wildcarded because HFT_CONFIG_PATH is
+# user-chosen — a per-watchlist file like qpulse_equities.json is normal.
+qpulse_*.json
 recordings/
 
 # Python
