@@ -230,6 +230,26 @@ button.danger:hover { filter: brightness(1.1); }
 .bar-row .bar { background: var(--blue); height: 14px; border-radius: 3px; }
 .bar-row .count { color: var(--slate-muted); font-family: var(--font-mono); }
 
+/* Clicking a symbol filters the tape to it; clicking it again clears. */
+.bar-row.clickable { cursor: pointer; border-radius: 4px; padding: 2px 4px; margin: 2px -4px; }
+.bar-row.clickable:hover { background: var(--blue-light); }
+.bar-row.clickable:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.bar-row.selected { background: var(--blue-light); }
+.bar-row.selected .sym { color: var(--navy); font-weight: 700; }
+/* Unselected rows recede so the active filter is obvious at a glance. */
+.bar-row.dimmed .bar { opacity: 0.35; }
+.bar-row.dimmed .sym, .bar-row.dimmed .count { opacity: 0.6; }
+
+.filter-note {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 8px; font-size: 12px; color: var(--navy);
+  background: var(--blue-light); border-radius: 4px; padding: 5px 8px;
+}
+.filter-note button {
+  margin-left: auto; border: 0; background: transparent; cursor: pointer;
+  color: var(--blue); font: inherit; text-decoration: underline; padding: 0;
+}
+
 /* ── Alert cards (used by both Surveillance tape and History) ── */
 .tape, .history-list {
   margin-top: 16px;
