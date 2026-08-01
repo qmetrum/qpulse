@@ -71,8 +71,17 @@ chmod 0640 "$ENV_FILE"
 
 echo "==> systemd unit"
 cp "$REPO_ROOT/deploy/qpulse.service" "$SERVICE_FILE"
+
+# Health-check timer. Restart=on-failure only catches a process that exits; it
+# cannot see a process that is alive but no longer receiving data. The service
+# reconnects on its own, so this fires only when that has stopped working.
+cp "$REPO_ROOT/deploy/qpulse-healthcheck.service" /etc/systemd/system/
+cp "$REPO_ROOT/deploy/qpulse-healthcheck.timer" /etc/systemd/system/
+chmod +x "$REPO_ROOT/deploy/qpulse-healthcheck.sh"
+
 systemctl daemon-reload
 systemctl enable qpulse
+systemctl enable --now qpulse-healthcheck.timer
 
 echo "==> caddy config"
 if [ ! -f "$CADDY_FILE.qpulse-managed" ]; then

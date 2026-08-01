@@ -237,6 +237,28 @@ async def alpaca_market_feed(
 # Alpaca FeedController - mutable subscription state for runtime add/remove
 # --------------------------------------------------------------------------
 
+class FeedUnusable(Exception):
+    """The stream is open but will not deliver data — reconnect instead of waiting."""
+
+
+# Alpaca stream error codes. The stream is unusable after any of these, but the
+# socket stays open, so nothing raises and the reader waits forever. Mapped to
+# explanations because "code 406" in a log at 3am is not actionable.
+_ALPACA_ERROR_HELP = {
+    400: "invalid syntax — symbol format probably does not match the feed",
+    401: "not authenticated",
+    402: "auth failed — check ALPACA_API_KEY / ALPACA_API_SECRET",
+    403: "already authenticated",
+    404: "auth timeout",
+    405: "symbol limit exceeded for this subscription tier",
+    406: "connection limit exceeded — another process is using these keys",
+    407: "slow client — the consumer could not keep up",
+    408: "v2 data not enabled on this account",
+    409: "insufficient subscription for the requested feed",
+    410: "invalid subscribe action",
+}
+
+
 class AlpacaFeedController:
     """Wrap an Alpaca WebSocket connection with mutable subscription state.
 
@@ -255,6 +277,7 @@ class AlpacaFeedController:
         quotes: bool = True,
         api_key: Optional[str] = None,
         api_secret: Optional[str] = None,
+        stale_sec: Optional[float] = None,
     ):
         self.feed_name = feed_name
         self.trades = trades
@@ -263,8 +286,18 @@ class AlpacaFeedController:
         self.api_secret = api_secret or os.environ.get("ALPACA_API_SECRET")
         if not self.api_key or not self.api_secret:
             raise SystemExit("ALPACA_API_KEY and ALPACA_API_SECRET must be set")
+        # Silence longer than this means reconnect. Overnight on an equities
+        # feed there is legitimately no data, so this fires repeatedly then —
+        # harmless, since a reconnect is cheap and re-subscribes cleanly. The
+        # alternative (exiting for systemd to restart) would loop all night.
+        self.stale_sec = float(
+            stale_sec if stale_sec is not None
+            else os.environ.get("HFT_FEED_STALE_SEC", 300.0)
+        )
         self._symbols: "set[str]" = set(initial_symbols)
         self._ws = None
+        self._last_error: Optional[str] = None
+        self._reconnects = 0
         self._lock = asyncio.Lock()
         self._rebuild = asyncio.Event()  # set by switch_feed() to force reconnect
 
@@ -307,7 +340,22 @@ class AlpacaFeedController:
                         await ws.send(json.dumps(sub))
                     backoff = 1.0
 
-                    async for raw in ws:
+                    # Read with a timeout rather than `async for`. A websocket
+                    # that stops delivering data stays open — ping_interval
+                    # keeps it alive at the protocol level — so an untimed
+                    # iterator waits indefinitely on a dead feed. Timing out
+                    # and reconnecting is the only way to notice.
+                    it = ws.__aiter__()
+                    while True:
+                        try:
+                            raw = await asyncio.wait_for(it.__anext__(),
+                                                         timeout=self.stale_sec)
+                        except asyncio.TimeoutError:
+                            raise FeedUnusable(
+                                f"no data for {self.stale_sec:.0f}s") from None
+                        except StopAsyncIteration:
+                            raise FeedUnusable("stream closed by server") from None
+
                         recv_ns = time.perf_counter_ns()
                         try:
                             msgs = json.loads(raw)
@@ -336,13 +384,32 @@ class AlpacaFeedController:
                                     ingest_ns=recv_ns,
                                 )
                             elif t == "error":
-                                print(f"[alpaca] error: {m}")
+                                code = m.get("code")
+                                help_text = _ALPACA_ERROR_HELP.get(
+                                    code, m.get("msg", "unknown error"))
+                                # Previously logged and ignored, which left the
+                                # reader waiting on a stream the server had
+                                # already given up on.
+                                raise FeedUnusable(f"stream error {code}: {help_text}")
             except Exception as e:
                 async with self._lock:
                     self._ws = None
-                print(f"[alpaca] {type(e).__name__}: {e}; reconnect in {backoff:.1f}s")
+                self._last_error = f"{type(e).__name__}: {e}"
+                self._reconnects += 1
+                print(f"[alpaca] {self._last_error}; reconnect in {backoff:.1f}s")
                 await asyncio.sleep(backoff)
                 backoff = min(backoff * 2, 30.0)
+
+    @property
+    def health(self) -> dict:
+        """Connection-level state, distinct from tick age — a feed can be
+        connected and silent (closed market) or stale and broken."""
+        return {
+            "connected": self._ws is not None,
+            "reconnects": self._reconnects,
+            "last_error": self._last_error,
+            "stale_sec": self.stale_sec,
+        }
 
     async def add(self, syms: "list[str]") -> "list[str]":
         """Subscribe to new symbols. Returns the list actually added (deduped)."""

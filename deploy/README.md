@@ -177,6 +177,31 @@ sudo tail -F /var/log/caddy/qpulse.log   # access log (if configured)
 sudo systemctl restart qpulse
 ```
 
+### Feed liveness
+
+`/health` distinguishes three failure shapes, so "the process is up" is never
+mistaken for "it is working":
+
+| status | meaning |
+|---|---|
+| `ok` | receiving data |
+| `starting` | connected, no data yet, still inside the grace period |
+| `reconnecting` | the websocket is down; backoff is in progress |
+| `degraded` | connected but no data for longer than expected |
+| `down` | the detector task itself has died |
+
+The service reconnects on its own when a stream goes silent or the vendor sends
+an error frame (`HFT_FEED_STALE_SEC`, default 300 s). A `qpulse-healthcheck`
+timer runs every 5 minutes as a backstop and restarts the unit only if a fault
+persists past `QPULSE_MAX_DEGRADED_SEC` (default 1 h) — long enough that a
+closed equities market, which is legitimately silent overnight, never triggers
+it.
+
+```bash
+systemctl list-timers qpulse-healthcheck.timer
+journalctl -u qpulse-healthcheck -n 20
+```
+
 ### Inspect persistent state
 
 ```bash

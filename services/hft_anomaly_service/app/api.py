@@ -109,14 +109,29 @@ def make_app(
         tick_age_sec = (now_ns - last_ns) / 1e9 if last_ns else None
         det_task = app.state.detector_task
         detector_alive = bool(det_task and not det_task.done())
+        # Socket state and data flow are different questions: a live equities
+        # feed is legitimately silent overnight, while a stale crypto feed is
+        # broken. Report both instead of inferring one from the other.
+        controller = getattr(app.state, "feed_controller", None)
+        feed = controller.health if controller is not None else None
         feed_connected = tick_age_sec is not None and tick_age_sec < 30.0
+        uptime_sec = time.time() - app.state.started_at
+        # Grace period so a service that is still connecting does not look
+        # broken; after it, having never received a tick is a real fault.
+        grace_sec = max(60.0, (feed or {}).get("stale_sec", 0.0))
         if not detector_alive:
             status = "down"
+        elif feed is not None and not feed["connected"]:
+            status = "reconnecting"
+        elif last_ns == 0:
+            # Never received data. Previously fell through to "ok" because tick
+            # age was None — a service that has never worked reported healthy.
+            status = "starting" if uptime_sec < grace_sec else "degraded"
         elif tick_age_sec is not None and tick_age_sec > 30.0:
             status = "degraded"
         else:
             status = "ok"
-        return {
+        out = {
             "status": status,
             "active": state.active,
             "detector_alive": detector_alive,
@@ -124,8 +139,11 @@ def make_app(
             "last_tick_ns": last_ns,
             "tick_age_sec": tick_age_sec,
             "symbols_active": len(router.symbols()),
-            "uptime_sec": time.time() - app.state.started_at,
+            "uptime_sec": uptime_sec,
         }
+        if feed is not None:
+            out["feed"] = feed
+        return out
 
     @app.get("/config")
     def get_config() -> dict:

@@ -1,0 +1,9 @@
+[Unit]
+Description=Qpulse health check — restart if up but not delivering data
+After=qpulse.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/qpulse/deploy/qpulse-healthcheck.sh
+# Needs root to call systemctl restart; the check itself only reads localhost.
+User=root
